@@ -1,0 +1,44 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="purchase">
+      <h2 data-cy="purchaseDetailsHeading"><span jhiTranslate="libraryApp.purchase.detail.title">Purchase</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ purchase.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="libraryApp.purchase.cost">Cost</span></dt>
+        <dd>
+          <span>{{ purchase.cost }}</span>
+        </dd>
+        <dt><span jhiTranslate="libraryApp.purchase.book">Book</span></dt>
+        <dd>
+          <div *ngIf="purchase.book">
+            <a [routerLink]="['/book', purchase.book?.id, 'view']">{{ purchase.book?.name }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="libraryApp.purchase.customer">Customer</span></dt>
+        <dd>
+          <div *ngIf="purchase.customer">
+            <a [routerLink]="['/customer', purchase.customer?.id, 'view']">{{ purchase.customer?.name }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/purchase', purchase.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

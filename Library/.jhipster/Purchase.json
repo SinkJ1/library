@@ -1,0 +1,35 @@
+{
+  "name": "Purchase",
+  "fields": [
+    {
+      "fieldName": "cost",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "book",
+      "otherEntityRelationshipName": "purchase",
+      "relationshipName": "book",
+      "otherEntityField": "name"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "purchase",
+      "relationshipName": "customer",
+      "otherEntityField": "name"
+    }
+  ],
+  "entityTableName": "purchase",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["library"],
+  "changelogDate": "20210715084834"
+}

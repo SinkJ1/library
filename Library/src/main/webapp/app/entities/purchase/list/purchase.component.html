@@ -1,0 +1,94 @@
+<div>
+  <h2 id="page-heading" data-cy="PurchaseHeading">
+    <span jhiTranslate="libraryApp.purchase.home.title">Purchases</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="reset()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="libraryApp.purchase.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-purchase"
+        [routerLink]="['/purchase/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="libraryApp.purchase.home.createLabel"> Create a new Purchase </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="purchases?.length === 0">
+    <span jhiTranslate="libraryApp.purchase.home.notFound">No purchases found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="purchases && purchases.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="cost"><span jhiTranslate="libraryApp.purchase.cost">Cost</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="book.name">
+            <span jhiTranslate="libraryApp.purchase.book">Book</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="customer.name">
+            <span jhiTranslate="libraryApp.purchase.customer">Customer</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+        <tr *ngFor="let purchase of purchases; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/purchase', purchase.id, 'view']">{{ purchase.id }}</a>
+          </td>
+          <td>{{ purchase.cost }}</td>
+          <td>
+            <div *ngIf="purchase.book">
+              <a [routerLink]="['/book', purchase.book?.id, 'view']">{{ purchase.book?.name }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="purchase.customer">
+              <a [routerLink]="['/customer', purchase.customer?.id, 'view']">{{ purchase.customer?.name }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/purchase', purchase.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/purchase', purchase.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(purchase)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
