@@ -45,7 +45,7 @@ public class HttpClientImplPasswordDto implements HttpClient<PasswordDTO> {
     }
 
     @Override
-    public String post(String url, PasswordDTO dto){
+    public String post(String url, PasswordDTO dto, String header){
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()

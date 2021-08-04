@@ -52,7 +52,7 @@ public class HttpClientImplPermission implements HttpClient<PermissionDto> {
     }
 
     @Override
-    public String post(String url, PermissionDto dto){
+    public String post(String url, PermissionDto dto, String header){
 
         ObjectMapper objectMapper = new ObjectMapper();
 

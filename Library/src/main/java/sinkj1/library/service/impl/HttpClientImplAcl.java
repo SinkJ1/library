@@ -48,7 +48,7 @@ public class HttpClientImplAcl implements HttpClient<AclByIdDto> {
     }
 
     @Override
-    public String post(String url, AclByIdDto dto){
+    public String post(String url, AclByIdDto dto, String header){
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()

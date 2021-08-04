@@ -58,7 +58,7 @@ public class HttpClientCheckPermissionDto implements HttpClient<CheckPermissionD
     }
 
     @Override
-    public String post(String url, CheckPermissionDto dto){
+    public String post(String url, CheckPermissionDto dto, String header){
 
         HttpRequest request = null;
         try {
@@ -66,7 +66,7 @@ public class HttpClientCheckPermissionDto implements HttpClient<CheckPermissionD
                 .uri(new URI(url))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTYyODE2MTM1MH0.psJCNp4261BPq-mB_H9gPGzwpD2pJIc_TkxI3RPrmAPntAN3brUNnr2jW9FQyfACPA64vZPQfZ27oHWbZyUOqg")
+                .header("Authorization", "Bearer " + header)
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
                 .build();
         } catch (URISyntaxException | JsonProcessingException e) {

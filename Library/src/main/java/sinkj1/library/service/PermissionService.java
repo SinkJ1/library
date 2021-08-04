@@ -35,7 +35,7 @@ public class PermissionService {
     }
 
     private void addPermissionForSid(BaseEntity targetObj, Permission permission, Sid sid) {
-        httpClient.post("http://localhost:8085/api/permission/authority",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),"READ", "user"));
+        httpClient.post("http://localhost:8085/api/permission/authority",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),"READ", "user"), "");
     }
 
 
