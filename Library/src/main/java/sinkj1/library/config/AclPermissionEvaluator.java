@@ -11,13 +11,13 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.log.LogMessage;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.domain.DefaultPermissionFactory;
 import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyImpl;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.domain.SidRetrievalStrategyImpl;
 import org.springframework.security.acls.model.Acl;
-import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
@@ -26,14 +26,22 @@ import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.acls.model.SidRetrievalStrategy;
 import org.springframework.security.core.Authentication;
-import sinkj1.library.domain.BaseEntity;
+import org.springframework.web.client.RestTemplate;
+import sinkj1.library.domain.CustomObjectIdentity;
+import sinkj1.library.security.jwt.TokenProvider;
+import sinkj1.library.service.HttpClient;
+import sinkj1.library.service.dto.CheckPermissionDto;
 
 @Configuration
 public class AclPermissionEvaluator implements PermissionEvaluator {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private final AclService aclService;
+   //private final AclService aclService;
+
+    private final TokenProvider tokenProvider;
+
+    private final HttpClient<CheckPermissionDto> httpClient;
 
     private ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy = new ObjectIdentityRetrievalStrategyImpl();
 
@@ -43,8 +51,10 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
 
     private PermissionFactory permissionFactory = new DefaultPermissionFactory();
 
-    public AclPermissionEvaluator(AclService aclService) {
-        this.aclService = aclService;
+    public AclPermissionEvaluator(TokenProvider tokenProvider, HttpClient<CheckPermissionDto> httpClient) {
+        this.tokenProvider = tokenProvider;
+        //   this.aclService = aclService;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -56,8 +66,12 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
         if(domainObject instanceof Optional){
             domainObject = ((Optional<?>) domainObject).get();
         }
+
         ObjectIdentity objectIdentity = this.objectIdentityRetrievalStrategy.getObjectIdentity(domainObject);
-        return checkPermission(authentication, objectIdentity, permission);
+        String token = tokenProvider.createToken(authentication, false);
+        String value = httpClient.post("http://localhost:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission));
+
+        return Boolean.valueOf(value);//checkPermission(authentication,objectIdentity,permission);
     }
 
     @Override
@@ -73,8 +87,8 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
         List<Permission> requiredPermission = resolvePermission(permission);
         this.logger.debug(LogMessage.of(() -> "Checking permission '" + permission + "' for object '" + oid + "'"));
         try {
-
-            Acl acl = this.aclService.readAclById(oid, sids);
+//2
+            Acl acl = null;//this.aclService.readAclById(oid, sids);
             if (acl.isGranted(requiredPermission, sids, false)) {
                 this.logger.debug("Access is granted");
                 return true;
@@ -86,6 +100,9 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
         }
         return false;
     }
+
+
+
 
     List<Permission> resolvePermission(Object permission) {
         if (permission instanceof Integer) {

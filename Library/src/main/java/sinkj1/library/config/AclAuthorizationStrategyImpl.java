@@ -16,9 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 
-public class AclAuthorizationStrategyImpl implements AclAuthorizationStrategy {
+public class AclAuthorizationStrategyImpl /*implements AclAuthorizationStrategy*/ {
 
-    private final GrantedAuthority gaGeneralChanges;
+ /*   private final GrantedAuthority gaGeneralChanges;
 
     private final GrantedAuthority gaModifyAuditing;
 
@@ -100,5 +100,5 @@ public class AclAuthorizationStrategyImpl implements AclAuthorizationStrategy {
 
         throw new AccessDeniedException(
             "Principal does not have required ACL permissions to perform requested operation");
-    }
+    }*/
 }

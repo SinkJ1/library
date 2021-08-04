@@ -22,11 +22,11 @@ import sinkj1.library.security.AuthoritiesConstants;
 import javax.sql.DataSource;
 import java.util.Objects;
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class AclMethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+/*@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)*/
+public class AclMethodSecurityConfiguration/* extends GlobalMethodSecurityConfiguration */{
 
-    @Autowired
+  /*  @Autowired
     private DataSource dataSource;
 
     private String deleteEntryByObjectIdentityForeignKey = "delete from acl_entry where acl_object_identity=?";
@@ -128,5 +128,5 @@ public class AclMethodSecurityConfiguration extends GlobalMethodSecurityConfigur
     @Bean
     AclAuthorizationStrategyImpl aclAuthorizationStrategy() {
         return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_ADMIN"));
-    }
+    }*/
 }

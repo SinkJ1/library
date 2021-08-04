@@ -1,12 +1,12 @@
 package sinkj1.library.domain;
 
-import org.springframework.security.acls.domain.BasePermission;
-
 public class PermissionVM {
+
 
     private Long entityId;
     private String permission;
     private String userCredentional;
+
 
     public PermissionVM(Long entityId, String permission, String userCredentional) {
         this.entityId = entityId;
@@ -28,4 +28,5 @@ public class PermissionVM {
     public String getUserCredentional() {
         return userCredentional;
     }
+
 }

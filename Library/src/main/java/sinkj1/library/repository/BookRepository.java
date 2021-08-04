@@ -27,12 +27,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     )
     List<Book> findAllWithEagerRelationships();
 
-    @PostFilter("hasPermission(filterObject, 'READ')")
+    @PostFilter("hasPermission(filterObject, 'READ') or hasPermission(filterObject, 'WRITE')")
     @Query(value = "select distinct book from Book book left join fetch book.authors")
     List<Book> findAll();
 
 
-    @PostAuthorize("hasPermission(returnObject, 'READ')")
+    @PostAuthorize("hasPermission(returnObject, 'READ') or hasPermission(returnObject, 'WRITE') or hasPermission(returnObject, 'DELETE')")
     @Query("select book from Book book left join fetch book.authors where book.id =:id")
     Optional<Book> findOneWithEagerRelationships(@Param("id") Long id);
 }

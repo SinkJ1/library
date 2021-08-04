@@ -1,21 +1,26 @@
 package sinkj1.library.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import sinkj1.library.domain.Book;
 import sinkj1.library.service.HttpClient;
 import sinkj1.library.service.dto.PasswordDTO;
+import sinkj1.library.service.dto.PermissionDto;
 import sinkj1.library.web.rest.AccountResource;
 
+import java.beans.Transient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import com.google.gson.Gson;
 
 @Service
-public class HttpClientImpl implements HttpClient {
-
+public class HttpClientImplPermission implements HttpClient<PermissionDto> {
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
 
     @Override
@@ -25,6 +30,8 @@ public class HttpClientImpl implements HttpClient {
             request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .GET()
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
                 .build();
         } catch (URISyntaxException e) {
             log.error(e.toString());
@@ -45,16 +52,19 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public String post(String url, PasswordDTO dto){
+    public String post(String url, PermissionDto dto){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(dto.toString()))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
                 .build();
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | JsonProcessingException e) {
             log.error(e.toString());
         }
 

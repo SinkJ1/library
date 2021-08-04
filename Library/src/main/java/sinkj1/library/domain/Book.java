@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -16,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "book")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@JsonTypeName("Book")
 public class Book implements Serializable, BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -168,4 +171,5 @@ public class Book implements Serializable, BaseEntity {
             ", dateOfIssue='" + getDateOfIssue() + "'" +
             "}";
     }
+
 }
