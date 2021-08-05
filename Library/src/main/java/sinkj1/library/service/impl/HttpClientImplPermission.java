@@ -62,6 +62,7 @@ public class HttpClientImplPermission implements HttpClient<PermissionDto> {
                 .uri(new URI(url))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + header)
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
                 .build();
         } catch (URISyntaxException | JsonProcessingException e) {

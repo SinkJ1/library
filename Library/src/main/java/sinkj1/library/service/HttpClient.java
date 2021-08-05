@@ -1,6 +1,5 @@
 package sinkj1.library.service;
 
-import sinkj1.library.service.dto.PasswordDTO;
 
 public interface HttpClient<T> {
 

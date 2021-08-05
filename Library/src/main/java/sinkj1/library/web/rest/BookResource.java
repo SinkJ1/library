@@ -241,23 +241,6 @@ public class BookResource {
             .build();
     }
 
-    @GetMapping("/books/permission/test")
-    public ResponseEntity<PermissionVM> getBaseEntity() {
-        Optional<Book> optionalBook = bookRepository.findById(1L);
-        Book book = optionalBook.get();
-        PermissionVM permissionVM = new PermissionVM(1L,"READ","user");
-        return ResponseEntity.ok(permissionVM);
-    }
-
-    @PostMapping("/books/permission/class")
-    public ResponseEntity<String> getBaseEntityClass(@RequestBody PermissionVM permissionVM) {
-        PermissionVM baseEntity = permissionVM;
-        String a = "";
-
-
-        return ResponseEntity.ok("permissionVM");
-    }
-
     private Permission convertFromStringToBasePermission(String permission){
 
         switch (permission) {
