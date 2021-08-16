@@ -32,6 +32,7 @@ public class HttpClientImplPermission implements HttpClient<PermissionDto> {
                 .GET()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
+                .header("X-TENANT-ID", "yuradb")
                 .build();
         } catch (URISyntaxException e) {
             log.error(e.toString());
@@ -63,6 +64,7 @@ public class HttpClientImplPermission implements HttpClient<PermissionDto> {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + header)
+                .header("X-TENANT-ID", "yuradb")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
                 .build();
         } catch (URISyntaxException | JsonProcessingException e) {

@@ -21,6 +21,7 @@ export class BookComponent implements OnInit {
   page: number;
   predicate: string;
   ascending: boolean;
+  masStatus: any[] = [];
 
   constructor(protected bookService: BookService, protected modalService: NgbModal, protected parseLinks: ParseLinks) {
     this.books = [];
@@ -33,7 +34,31 @@ export class BookComponent implements OnInit {
     this.ascending = true;
   }
 
+apiStatusRecord(): void{
+     const set = (masStat:any):void => {
+       this.masStatus = masStat
+     }
+     const x = new XMLHttpRequest();
+     x.open("GET", "http://localhost:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book", false);
+
+    const check = sessionStorage.getItem("jhi-authenticationToken")
+    let token = `Bearer ${check ? check : ''}`
+    token = token.replace('"', '')
+    token = token.replace('"', '')
+      x.setRequestHeader('Authorization', token);
+      x.send();
+      set(JSON.parse(x.responseText))
+    }
+    
+    getStatusRecord  (idRecord:any):any {
+      console.log(this.masStatus)
+     const newElemet :any = this.masStatus.filter((masStat) => masStat.objId === idRecord );
+     if (newElemet.length===0){return 0;}
+     return newElemet[0].mask;
+  }
+
   loadAll(): void {
+    this.apiStatusRecord();
     this.isLoading = true;
 
     this.bookService

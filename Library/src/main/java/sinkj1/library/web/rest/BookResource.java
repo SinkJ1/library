@@ -243,7 +243,7 @@ public class BookResource {
 
     private Permission convertFromStringToBasePermission(String permission){
 
-        switch (permission) {
+        switch (permission.toUpperCase()) {
             case "WRITE":
                 return BasePermission.WRITE;
             case "ADMINISTRATION":

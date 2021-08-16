@@ -24,6 +24,7 @@ public class HttpClientImplPasswordDto implements HttpClient<PasswordDTO> {
         try {
             request = HttpRequest.newBuilder()
                 .uri(new URI(url))
+                .header("X-TENANT-ID", "yuradb")
                 .GET()
                 .build();
         } catch (URISyntaxException e) {
@@ -53,6 +54,7 @@ public class HttpClientImplPasswordDto implements HttpClient<PasswordDTO> {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + header)
+                .header("X-TENANT-ID", "yuradb")
                 .POST(HttpRequest.BodyPublishers.ofString(dto.toString()))
                 .build();
         } catch (URISyntaxException e) {
