@@ -33,32 +33,48 @@ export class BookComponent implements OnInit {
     this.predicate = 'id';
     this.ascending = true;
   }
-
-apiStatusRecord(): void{
-     const set = (masStat:any):void => {
-       this.masStatus = masStat
-     }
-     const x = new XMLHttpRequest();
-     x.open("GET", "http://localhost:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book", false);
-
+  async postData(url = '') :Promise<string> {
     const check = sessionStorage.getItem("jhi-authenticationToken")
     let token = `Bearer ${check ? check : ''}`
     token = token.replace('"', '')
     token = token.replace('"', '')
-      x.setRequestHeader('Authorization', token);
-      x.send();
-      set(JSON.parse(x.responseText))
+    const response :any= await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': token,
+        'X-TENANT-ID': 'yuradb'
+      }
     }
+    );
+
+    const data: string = JSON.stringify(await response.json());
+
+    return data
+  }
+  
+    apiStatusRecordByFetch(): void{
+    this.postData("http://192.168.1.139:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book")
+    .then((data)=>{
+      this.masStatus = JSON.parse(data)
+    })
+  }
     
     getStatusRecord  (idRecord:any):any {
-      console.log(this.masStatus)
      const newElemet :any = this.masStatus.filter((masStat) => masStat.objId === idRecord );
      if (newElemet.length===0){return 0;}
-     return newElemet[0].mask;
-  }
 
+     let max = newElemet[0].mask
+     for(let i = 0; i < newElemet.length; i++){
+       if(newElemet[i].mask > max){
+        max = newElemet[i].mask
+       }
+     }
+
+     return max;
+  }
+  
   loadAll(): void {
-    this.apiStatusRecord();
+    this.apiStatusRecordByFetch();
     this.isLoading = true;
 
     this.bookService
