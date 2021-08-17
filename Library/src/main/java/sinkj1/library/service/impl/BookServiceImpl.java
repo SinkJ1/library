@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sinkj1.library.domain.Book;
@@ -91,8 +92,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void delete(Long id) {
-        log.debug("Request to delete Book : {}", id);
-        bookRepository.deleteById(id);
+    @PostAuthorize("hasPermission('#book', 'DELETE')")
+    public void delete(BookDTO book) {
+        log.debug("Request to delete Book : {}", book.getId());
+        bookRepository.deleteById(book.getId());
     }
 }

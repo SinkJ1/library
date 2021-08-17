@@ -204,7 +204,8 @@ public class BookResource {
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         log.debug("REST request to delete Book : {}", id);
-        bookService.delete(id);
+        Optional<BookDTO> bookDTO = bookService.findOne(id);
+        bookService.delete(bookDTO.get());
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

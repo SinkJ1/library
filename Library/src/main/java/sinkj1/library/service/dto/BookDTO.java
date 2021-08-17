@@ -1,5 +1,7 @@
 package sinkj1.library.service.dto;
 
+import sinkj1.library.domain.BaseEntity;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
