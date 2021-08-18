@@ -1,6 +1,5 @@
 package sinkj1.library.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -9,11 +8,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sinkj1.library.domain.Book;
 import sinkj1.library.repository.BookRepository;
 import sinkj1.library.service.BookService;
+import sinkj1.library.service.PermissionService;
 import sinkj1.library.service.dto.BookDTO;
 import sinkj1.library.service.mapper.BookMapper;
 
@@ -28,36 +32,51 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
+    private final PermissionService permissionService;
+
     private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
+    public BookServiceImpl(BookRepository bookRepository, PermissionService permissionService, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
+        this.permissionService = permissionService;
         this.bookMapper = bookMapper;
     }
 
+
+    public Book saveWithPermission(Book book){
+        return bookRepository.save(book);
+    }
+
+
     @Override
-    public BookDTO save(BookDTO bookDTO) {
-        log.debug("Request to save Book : {}", bookDTO);
-        Book book = bookMapper.toEntity(bookDTO);
-        book = bookRepository.save(book);
+    @PreAuthorize("hasPermission(#book, 'CREATE') or hasPermission(#book, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    public BookDTO save(Book book) {
+        log.debug("Request to save Book : {}", book);
+        book.setId(null);
+        book = saveWithPermission(book);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        if (book != null){
+            permissionService.addPermissionForUser(book, BasePermission.ADMINISTRATION, userName);
+        }
+
         return bookMapper.toDto(book);
     }
 
-    @Override
-    public Optional<BookDTO> partialUpdate(BookDTO bookDTO) {
-        log.debug("Request to partially update Book : {}", bookDTO);
-
+    public Optional<BookDTO> updateWithPermission(Book book){
         return bookRepository
-            .findById(bookDTO.getId())
-            .map(
-                existingBook -> {
-                    bookMapper.partialUpdate(existingBook, bookDTO);
-
-                    return existingBook;
-                }
-            )
+            .findById(book.getId())
             .map(bookRepository::save)
             .map(bookMapper::toDto);
+    }
+
+    @Override
+    @PreAuthorize("hasPermission(#book, 'WRITE') or hasPermission(#book, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    public Optional<BookDTO> partialUpdate(Book book) {
+        log.debug("Request to partially update Book : {}", book);
+        BookDTO bookDTO = bookMapper.toDto(bookRepository.save(book));
+        Optional<BookDTO> optionalBookDTO = Optional.ofNullable(bookDTO);
+        return optionalBookDTO;
     }
 
 
@@ -92,8 +111,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @PostAuthorize("hasPermission('#book', 'DELETE')")
-    public void delete(BookDTO book) {
+    @PostAuthorize("hasPermission(#book, 'DELETE') or hasPermission(#book, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    public void delete(Book book) {
         log.debug("Request to delete Book : {}", book.getId());
         bookRepository.deleteById(book.getId());
     }

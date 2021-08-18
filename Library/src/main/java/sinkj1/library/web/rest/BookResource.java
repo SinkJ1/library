@@ -13,26 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import sinkj1.library.domain.BaseEntity;
 import sinkj1.library.domain.Book;
 import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.repository.BookRepository;
-import sinkj1.library.security.AuthoritiesConstants;
 import sinkj1.library.service.BookService;
 import sinkj1.library.service.PermissionService;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.mapper.BookMapper;
 import sinkj1.library.web.rest.errors.BadRequestAlertException;
-import sinkj1.library.web.rest.vm.LoginVM;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -51,13 +44,16 @@ public class BookResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final BookMapper bookMapper;
+
     private final BookService bookService;
 
     private final BookRepository bookRepository;
 
     private final PermissionService permissionService;
 
-    public BookResource(BookService bookService, BookRepository bookRepository, PermissionService permissionService) {
+    public BookResource(BookMapper bookMapper, BookService bookService, BookRepository bookRepository, PermissionService permissionService) {
+        this.bookMapper = bookMapper;
         this.bookService = bookService;
         this.bookRepository = bookRepository;
         this.permissionService = permissionService;
@@ -77,7 +73,8 @@ public class BookResource {
         if (bookDTO.getId() != null) {
             throw new BadRequestAlertException("A new book cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        BookDTO result = bookService.save(bookDTO);
+        bookDTO.setId(0L);
+        BookDTO result = bookService.save(bookMapper.toEntity(bookDTO));
         return ResponseEntity
             .created(new URI("/api/books/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -112,7 +109,7 @@ public class BookResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        BookDTO result = bookService.save(bookDTO);
+        BookDTO result = bookService.partialUpdate(bookMapper.toEntity(bookDTO)).get();
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, bookDTO.getId().toString()))
@@ -148,7 +145,7 @@ public class BookResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<BookDTO> result = bookService.partialUpdate(bookDTO);
+        Optional<BookDTO> result = bookService.partialUpdate(bookMapper.toEntity(bookDTO));
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -204,8 +201,8 @@ public class BookResource {
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         log.debug("REST request to delete Book : {}", id);
-        Optional<BookDTO> bookDTO = bookService.findOne(id);
-        bookService.delete(bookDTO.get());
+        Optional<Book> book = bookRepository.findById(id);
+        bookService.delete(book.get());
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

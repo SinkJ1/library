@@ -22,6 +22,7 @@ export class BookComponent implements OnInit {
   predicate: string;
   ascending: boolean;
   masStatus: any[] = [];
+  canDo = false;
 
   constructor(protected bookService: BookService, protected modalService: NgbModal, protected parseLinks: ParseLinks) {
     this.books = [];
@@ -56,25 +57,36 @@ export class BookComponent implements OnInit {
     this.postData("http://192.168.1.139:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book")
     .then((data)=>{
       this.masStatus = JSON.parse(data)
+      console.log(JSON.parse(data))
+    })
+  }
+
+  apiCanDoByFetch(): void{
+    this.postData("http://192.168.1.139:8085/api/check-role")
+    .then((data)=>{
+      this.canDo = JSON.parse(data)
     })
   }
     
-    getStatusRecord  (idRecord:any):any {
-     const newElemet :any = this.masStatus.filter((masStat) => masStat.objId === idRecord );
-     if (newElemet.length===0){return 0;}
+    getStatusRecord  (idRecord:any, permissionId: number):any {
+      if(this.canDo){
+        return 16
+      }
+      const newElemet :any = this.masStatus.filter((masStat) => masStat.objId === idRecord );
+      if (newElemet.length===0){return 0;}
 
-     let max = newElemet[0].mask
-     for(let i = 0; i < newElemet.length; i++){
-       if(newElemet[i].mask > max){
-        max = newElemet[i].mask
-       }
-     }
-
-     return max;
+      for(let i = 0; i < newElemet.length; i++){
+        if(newElemet[i].mask === permissionId){
+         return true
+        }
+      }
+ 
+      return false;
   }
-  
+
   loadAll(): void {
     this.apiStatusRecordByFetch();
+    this.apiCanDoByFetch();
     this.isLoading = true;
 
     this.bookService

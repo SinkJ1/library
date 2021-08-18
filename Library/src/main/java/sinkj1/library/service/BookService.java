@@ -17,7 +17,7 @@ public interface BookService {
      * @param bookDTO the entity to save.
      * @return the persisted entity.
      */
-    BookDTO save(BookDTO bookDTO);
+    BookDTO save(Book bookDTO);
 
     /**
      * Partially updates a book.
@@ -25,7 +25,7 @@ public interface BookService {
      * @param bookDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<BookDTO> partialUpdate(BookDTO bookDTO);
+    Optional<BookDTO> partialUpdate(Book bookDTO);
 
     /**
      * Get all the books.
@@ -56,5 +56,5 @@ public interface BookService {
      *
      * @param id the id of the entity.
      */
-    void delete(BookDTO book);
+    void delete(Book book);
 }
