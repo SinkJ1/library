@@ -27,12 +27,12 @@ public class PermissionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         String token = tokenProvider.createToken(authentication, false);
-        httpClient.post("http://localhost:8085/api/permission/user",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),permission.getMask(), username), token);
+        httpClient.post("http://192.168.1.139:8085/api/permission/user",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),permission.getMask(), username), token);
     }
     public void addPermissionForAuthority(BaseEntity targetObj, Permission permission, String authority) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = tokenProvider.createToken(authentication, false);
-        httpClient.post("http://localhost:8085/api/permission/authority",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),permission.getMask(), authority), token);
+        httpClient.post("http://192.168.1.139:8085/api/permission/authority",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),permission.getMask(), authority), token);
     }
 
 }

@@ -57,7 +57,7 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
 
         ObjectIdentity objectIdentity = this.objectIdentityRetrievalStrategy.getObjectIdentity(domainObject);
         String token = tokenProvider.createToken(authentication, false);
-        String value = httpClient.post("http://localhost:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission), token);
+        String value = httpClient.post("http://192.168.1.139:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission), token);
 
         return Boolean.valueOf(value);
     }
@@ -67,7 +67,7 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
                                  Object permission) {
         ObjectIdentity objectIdentity = this.objectIdentityGenerator.createObjectIdentity(targetId, targetType);
         String token = tokenProvider.createToken(authentication, false);
-        String value = httpClient.post("http://localhost:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission), token);
+        String value = httpClient.post("http://192.168.1.139:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission), token);
 
         return Boolean.valueOf(value);
     }
