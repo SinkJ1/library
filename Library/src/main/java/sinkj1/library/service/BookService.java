@@ -1,10 +1,14 @@
 package sinkj1.library.service;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import sinkj1.library.domain.Book;
+import sinkj1.library.domain.MaskAndObject;
 import sinkj1.library.service.dto.BookDTO;
 
 /**
@@ -57,4 +61,5 @@ public interface BookService {
      * @param id the id of the entity.
      */
     void delete(Book book);
+
 }

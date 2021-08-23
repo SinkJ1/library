@@ -41,9 +41,17 @@ export class BookComponent implements OnInit {
     token = token.replace('"', '')
     const response :any= await fetch(url, {
       method: 'GET',
+
       headers: {
         'Authorization': token,
-        'X-TENANT-ID': 'yuradb'
+        'X-TENANT-ID': 'yuradb',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'X-PINGOTHER, Content-Type',
+        'Access-Control-Max-Age': '0',
+        'Content-Security-Policy': 'default-src *; connect-src *; script-src *; object-src *',
+        'X-Content-Security-Policy': 'default-src *; connect-src *; script-src *; object-src *',
+        'X-Webkit-CSP': 'default-src *; connect-src *; script-src unsafe-inline unsafe-eval *; object-src *' 
       }
     }
     );
@@ -64,6 +72,7 @@ export class BookComponent implements OnInit {
   apiCanDoByFetch(): void{
     this.postData("http://192.168.1.139:8085/api/check-role")
     .then((data)=>{
+      console.log(data)
       this.canDo = JSON.parse(data)
     })
   }

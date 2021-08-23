@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 @Service
 public class HttpClientImplAcl implements HttpClient<AclByIdDto> {
@@ -49,15 +50,16 @@ public class HttpClientImplAcl implements HttpClient<AclByIdDto> {
     }
 
     @Override
-    public String post(String url, AclByIdDto dto, String header){
+    public String post(String url, AclByIdDto dto, String token){
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + header)
+                .header("Authorization", "Bearer " + token)
                 .header("X-TENANT-ID", "yuradb")
+                .timeout(Duration.ofSeconds(1))
                 .POST(HttpRequest.BodyPublishers.ofString(dto.toString()))
                 .build();
         } catch (URISyntaxException e) {

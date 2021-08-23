@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -59,7 +60,7 @@ public class HttpClientCheckPermissionDto implements HttpClient<CheckPermissionD
     }
 
     @Override
-    public String post(String url, CheckPermissionDto dto, String header){
+    public String post(String url, CheckPermissionDto dto, String token){
 
         HttpRequest request = null;
         try {
@@ -67,9 +68,10 @@ public class HttpClientCheckPermissionDto implements HttpClient<CheckPermissionD
                 .uri(new URI(url))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + header)
+                .header("Authorization", "Bearer " + token)
                 .header("X-TENANT-ID", "yuradb")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
+                .timeout(Duration.ofSeconds(1))
                 .build();
         } catch (URISyntaxException | JsonProcessingException e) {
             log.error(e.toString());

@@ -27,19 +27,14 @@ import sinkj1.library.service.dto.PasswordDTO;
 @Component("userDetailsService")
 public class DomainUserDetailsService implements UserDetailsService {
 
-    private final String urlForGetPasswordFromRedis = "http://localhost:9001/api/counter/";
-
     private final Logger log = LoggerFactory.getLogger(DomainUserDetailsService.class);
 
     private final UserRepository userRepository;
 
-    private final HttpClient<PasswordDTO> httpClient;
-
     private final PasswordEncoder passwordEncoder;
 
-    public DomainUserDetailsService(UserRepository userRepository, HttpClient<PasswordDTO> httpClient, PasswordEncoder passwordEncoder) {
+    public DomainUserDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.httpClient = httpClient;
         this.passwordEncoder = passwordEncoder;
     }
 

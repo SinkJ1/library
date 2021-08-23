@@ -17,6 +17,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+
 import com.google.gson.Gson;
 
 @Service
@@ -53,7 +55,7 @@ public class HttpClientImplPermission implements HttpClient<PermissionDto> {
     }
 
     @Override
-    public String post(String url, PermissionDto dto, String header){
+    public String post(String url, PermissionDto dto, String token){
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -63,9 +65,10 @@ public class HttpClientImplPermission implements HttpClient<PermissionDto> {
                 .uri(new URI(url))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + header)
+                .header("Authorization", "Bearer " + token)
                 .header("X-TENANT-ID", "yuradb")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
+                .timeout(Duration.ofSeconds(1))
                 .build();
         } catch (URISyntaxException | JsonProcessingException e) {
             log.error(e.toString());

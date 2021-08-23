@@ -18,7 +18,10 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import sinkj1.library.domain.Book;
+import sinkj1.library.domain.MaskAndObject;
 import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.repository.BookRepository;
 import sinkj1.library.service.BookService;
@@ -254,6 +257,7 @@ public class BookResource {
                 return BasePermission.READ;
         }
     }
+
 
 
 }

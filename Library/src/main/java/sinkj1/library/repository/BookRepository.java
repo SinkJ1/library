@@ -17,17 +17,25 @@ import sinkj1.library.domain.Book;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    @PostFilter("hasPermission(filterObject, 'READ') or hasPermission(filterObject, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    //@PostFilter("hasPermission(filterObject, 'READ') or hasPermission(filterObject, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    @Query(
+        value = "select distinct book from Book book left join fetch book.authors where book.id in :booksIds",
+        countQuery = "select count(distinct book) from Book book"
+    )
+    List<Book> findAllWithEagerRelationships(@Param("booksIds")List<Long> booksIds);
+
     @Query(
         value = "select distinct book from Book book left join fetch book.authors",
         countQuery = "select count(distinct book) from Book book"
     )
     List<Book> findAllWithEagerRelationships();
 
-    @PostFilter("hasPermission(filterObject, 'READ') or hasPermission(filterObject, 'WRITE') or hasPermission(filterObject, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    //@PostFilter("hasPermission(filterObject, 'READ') or hasPermission(filterObject, 'WRITE') or hasPermission(filterObject, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
+    @Query(value = "select distinct book from Book book left join fetch book.authors where book.id in :booksIds")
+    List<Book> findAll(@Param("booksIds")List<Long> booksIds);
+
     @Query(value = "select distinct book from Book book left join fetch book.authors")
     List<Book> findAll();
-
 
     @PostAuthorize("hasPermission(returnObject, 'READ') or hasPermission(returnObject, 'WRITE') or hasPermission(returnObject, 'DELETE') or hasPermission(returnObject, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
     @Query("select book from Book book left join fetch book.authors where book.id =:id")

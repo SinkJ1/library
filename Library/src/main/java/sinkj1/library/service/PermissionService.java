@@ -25,7 +25,6 @@ public class PermissionService {
 
     public void addPermissionForUser(BaseEntity targetObj, Permission permission, String username) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
         String token = tokenProvider.createToken(authentication, false);
         httpClient.post("http://192.168.1.139:8085/api/permission/user",new PermissionDto(targetObj.getId(), targetObj.getClass().getName(),permission.getMask(), username), token);
     }
