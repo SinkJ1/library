@@ -131,7 +131,7 @@ server:
       cookie:
         http-only: false
     context-path: /internship/yury_sinkevich/library/
-  port: 8082
+  port: 8080
 
 # Properties to be exposed on the /info management endpoint
 info:

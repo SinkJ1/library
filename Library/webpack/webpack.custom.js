@@ -50,7 +50,7 @@ module.exports = (config, options, targetOptions) => {
           https: tls,
           proxy: {
             target: `http${tls ? 's' : ''}://localhost:${
-              targetOptions.target === 'serve' ? '4200' : '8082'
+              targetOptions.target === 'serve' ? '4200' : '8080'
             }/internship/yury_sinkevich/library/`,
             proxyOptions: {
               changeOrigin: false, //pass the Host header to the backend unchanged  https://github.com/Browsersync/browser-sync/issues/430

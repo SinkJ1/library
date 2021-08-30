@@ -32,7 +32,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://acl_db:5432/library.db
+    url: jdbc:postgresql://acl_db:5432/librarydb
     username: postgres
     password: 123
     hikari:
@@ -59,7 +59,7 @@ server:
       cookie:
         http-only: false
     context-path: /internship/yury_sinkevich/library/
-  port: 8082
+  port: 8080
 
 # ===================================================================
 # JHipster specific properties
