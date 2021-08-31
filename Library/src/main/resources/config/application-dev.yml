@@ -34,7 +34,7 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://acl_db:5432/librarydb
     username: postgres
-    password: 123
+    password: 1111
     hikari:
       poolName: Hikari
       auto-commit: false
