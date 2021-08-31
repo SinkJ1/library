@@ -1,0 +1,1614 @@
+openapi: 3.0.3
+info:
+  title: library API
+  description: library API documentation
+  contact: {}
+  license:
+    name: unlicensed
+  version: 0.0.1
+servers:
+  - url: https://practice.sqilsoft.by/internship/yury_sinkevich/library/
+    description: Inferred Url
+tags:
+  - name: account-resource
+    description: Account Resource
+  - name: author-resource
+    description: Author Resource
+  - name: authority-resource
+    description: Authority Resource
+  - name: book-resource
+    description: Book Resource
+  - name: customer-resource
+    description: Customer Resource
+  - name: public-user-resource
+    description: Public User Resource
+  - name: purchase-resource
+    description: Purchase Resource
+  - name: user-jwt-controller
+    description: User JWT Controller
+  - name: user-resource
+    description: User Resource
+paths:
+  /api/account:
+    get:
+      tags:
+        - account-resource
+      summary: getAccount
+      operationId: getAccountUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdminUserDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - account-resource
+      summary: saveAccount
+      operationId: saveAccountUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserDTO'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/account/change-password:
+    post:
+      tags:
+        - account-resource
+      summary: changePassword
+      operationId: changePasswordUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeDTO'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/account/reset-password/finish:
+    post:
+      tags:
+        - account-resource
+      summary: finishPasswordReset
+      operationId: finishPasswordResetUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyAndPasswordVM'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/account/reset-password/init:
+    post:
+      tags:
+        - account-resource
+      summary: requestPasswordReset
+      operationId: requestPasswordResetUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/activate:
+    get:
+      tags:
+        - account-resource
+      summary: activateAccount
+      operationId: activateAccountUsingGET
+      parameters:
+        - name: key
+          in: query
+          description: key
+          required: true
+          style: form
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/authenticate:
+    get:
+      tags:
+        - account-resource
+      summary: isAuthenticated
+      operationId: isAuthenticatedUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - user-jwt-controller
+      summary: authorize
+      operationId: authorizeUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginVM'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/register:
+    post:
+      tags:
+        - account-resource
+      summary: registerAccount
+      operationId: registerAccountUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagedUserVM'
+      responses:
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/authors:
+    get:
+      tags:
+        - author-resource
+      summary: getAllAuthors
+      operationId: getAllAuthorsUsingGET
+      parameters:
+        - name: page
+          in: query
+          description: Page number of the requested page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Size of a page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - author-resource
+      summary: createAuthor
+      operationId: createAuthorUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthorDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/authors/{id}:
+    get:
+      tags:
+        - author-resource
+      summary: getAuthor
+      operationId: getAuthorUsingGET
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthorDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - author-resource
+      summary: updateAuthor
+      operationId: updateAuthorUsingPUT
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthorDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - author-resource
+      summary: deleteAuthor
+      operationId: deleteAuthorUsingDELETE
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    patch:
+      tags:
+        - author-resource
+      summary: partialUpdateAuthor
+      operationId: partialUpdateAuthorUsingPATCH
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorDTO'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/AuthorDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthorDTO'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/authority:
+    get:
+      tags:
+        - authority-resource
+      summary: getAllAuthority
+      operationId: getAllAuthorityUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Authority'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/authority/{login}:
+    get:
+      tags:
+        - authority-resource
+      summary: getAllAuthorityByLogin
+      operationId: getAllAuthorityByLoginUsingGET
+      parameters:
+        - name: login
+          in: path
+          description: login
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Authority'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/books:
+    get:
+      tags:
+        - book-resource
+      summary: getAllBooks
+      operationId: getAllBooksUsingGET
+      parameters:
+        - name: eagerload
+          in: query
+          description: eagerload
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          description: Page number of the requested page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Size of a page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - book-resource
+      summary: createBook
+      operationId: createBookUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BookDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/books/permission/authority:
+    post:
+      tags:
+        - book-resource
+      summary: addPermissionForAuthority
+      operationId: addPermissionForAuthorityUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionVM'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/books/permission/user:
+    post:
+      tags:
+        - book-resource
+      summary: addPermissionForUser
+      operationId: addPermissionForUserUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionVM'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/books/{id}:
+    get:
+      tags:
+        - book-resource
+      summary: getBook
+      operationId: getBookUsingGET
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BookDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - book-resource
+      summary: updateBook
+      operationId: updateBookUsingPUT
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BookDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - book-resource
+      summary: deleteBook
+      operationId: deleteBookUsingDELETE
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    patch:
+      tags:
+        - book-resource
+      summary: partialUpdateBook
+      operationId: partialUpdateBookUsingPATCH
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BookDTO'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/customers:
+    get:
+      tags:
+        - customer-resource
+      summary: getAllCustomers
+      operationId: getAllCustomersUsingGET
+      parameters:
+        - name: page
+          in: query
+          description: Page number of the requested page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Size of a page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - customer-resource
+      summary: createCustomer
+      operationId: createCustomerUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/customers/{id}:
+    get:
+      tags:
+        - customer-resource
+      summary: getCustomer
+      operationId: getCustomerUsingGET
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - customer-resource
+      summary: updateCustomer
+      operationId: updateCustomerUsingPUT
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - customer-resource
+      summary: deleteCustomer
+      operationId: deleteCustomerUsingDELETE
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    patch:
+      tags:
+        - customer-resource
+      summary: partialUpdateCustomer
+      operationId: partialUpdateCustomerUsingPATCH
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerDTO'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/CustomerDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomerDTO'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/authorities:
+    get:
+      tags:
+        - public-user-resource
+      summary: getAuthorities
+      operationId: getAuthoritiesUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/users:
+    get:
+      tags:
+        - public-user-resource
+      summary: getAllPublicUsers
+      operationId: getAllPublicUsersUsingGET
+      parameters:
+        - name: page
+          in: query
+          description: Page number of the requested page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Size of a page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/purchases:
+    get:
+      tags:
+        - purchase-resource
+      summary: getAllPurchases
+      operationId: getAllPurchasesUsingGET
+      parameters:
+        - name: page
+          in: query
+          description: Page number of the requested page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Size of a page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PurchaseDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - purchase-resource
+      summary: createPurchase
+      operationId: createPurchaseUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PurchaseDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/purchases/{id}:
+    get:
+      tags:
+        - purchase-resource
+      summary: getPurchase
+      operationId: getPurchaseUsingGET
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PurchaseDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - purchase-resource
+      summary: updatePurchase
+      operationId: updatePurchaseUsingPUT
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PurchaseDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - purchase-resource
+      summary: deletePurchase
+      operationId: deletePurchaseUsingDELETE
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    patch:
+      tags:
+        - purchase-resource
+      summary: partialUpdatePurchase
+      operationId: partialUpdatePurchaseUsingPATCH
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseDTO'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/PurchaseDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PurchaseDTO'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/admin/users:
+    get:
+      tags:
+        - user-resource
+      summary: getAllUsers
+      operationId: getAllUsersUsingGET
+      parameters:
+        - name: page
+          in: query
+          description: Page number of the requested page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Size of a page
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          style: form
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminUserDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - user-resource
+      summary: updateUser
+      operationId: updateUserUsingPUT
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdminUserDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - user-resource
+      summary: createUser
+      operationId: createUserUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/admin/users/{login}:
+    get:
+      tags:
+        - user-resource
+      summary: getUser
+      operationId: getUserUsingGET
+      parameters:
+        - name: login
+          in: path
+          description: login
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdminUserDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - user-resource
+      summary: deleteUser
+      operationId: deleteUserUsingDELETE
+      parameters:
+        - name: login
+          in: path
+          description: login
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+components:
+  schemas:
+    AdminUserDTO:
+      title: AdminUserDTO
+      required:
+        - login
+      type: object
+      properties:
+        activated:
+          type: boolean
+        authorities:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        createdBy:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        email:
+          maxLength: 254
+          minLength: 5
+          type: string
+        firstName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        id:
+          type: integer
+          format: int64
+        imageUrl:
+          maxLength: 256
+          minLength: 0
+          type: string
+        langKey:
+          maxLength: 10
+          minLength: 2
+          type: string
+        lastModifiedBy:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        login:
+          maxLength: 50
+          minLength: 1
+
+          type: string
+    AuthorDTO:
+      title: AuthorDTO
+      required:
+        - birthday
+        - name
+      type: object
+      properties:
+        birthday:
+          type: string
+          format: date
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Authority:
+      title: Authority
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 0
+          type: string
+    BookDTO:
+      title: BookDTO
+      required:
+        - dateOfIssue
+        - name
+      type: object
+      properties:
+        authors:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorDTO'
+        dateOfIssue:
+          type: string
+          format: date
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    CustomerDTO:
+      title: CustomerDTO
+      required:
+        - birthday
+        - name
+      type: object
+      properties:
+        birthday:
+          type: string
+          format: date
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    JWTToken:
+      title: JWTToken
+      type: object
+      properties:
+        id_token:
+          type: string
+    KeyAndPasswordVM:
+      title: KeyAndPasswordVM
+      type: object
+      properties:
+        key:
+          type: string
+        newPassword:
+          type: string
+    LoginVM:
+      title: LoginVM
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        password:
+          maxLength: 100
+          minLength: 1
+          type: string
+        rememberMe:
+          type: boolean
+        username:
+          maxLength: 50
+          minLength: 1
+          type: string
+    ManagedUserVM:
+      title: ManagedUserVM
+      required:
+        - login
+      type: object
+      properties:
+        activated:
+          type: boolean
+        authorities:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        createdBy:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        email:
+          maxLength: 254
+          minLength: 5
+          type: string
+        firstName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        id:
+          type: integer
+          format: int64
+        imageUrl:
+          maxLength: 256
+          minLength: 0
+          type: string
+        langKey:
+          maxLength: 10
+          minLength: 2
+          type: string
+        lastModifiedBy:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        login:
+          maxLength: 50
+          minLength: 1
+
+          type: string
+        password:
+          maxLength: 100
+          minLength: 4
+          type: string
+    PasswordChangeDTO:
+      title: PasswordChangeDTO
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+    PermissionVM:
+      title: PermissionVM
+      type: object
+      properties:
+        entityId:
+          type: integer
+          format: int64
+        permission:
+          type: string
+        userCredentional:
+          type: string
+    PurchaseDTO:
+      title: PurchaseDTO
+      type: object
+      properties:
+        book:
+          $ref: '#/components/schemas/BookDTO'
+        cost:
+          type: integer
+          format: int64
+        customer:
+          $ref: '#/components/schemas/CustomerDTO'
+        id:
+          type: integer
+          format: int64
+    User:
+      title: User
+      required:
+        - activated
+        - login
+      type: object
+      properties:
+        activated:
+          type: boolean
+        email:
+          maxLength: 254
+          minLength: 5
+          type: string
+        firstName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        id:
+          type: integer
+          format: int64
+        imageUrl:
+          maxLength: 256
+          minLength: 0
+          type: string
+        langKey:
+          maxLength: 10
+          minLength: 2
+          type: string
+        lastName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        login:
+          maxLength: 50
+          minLength: 1
+
+          type: string
+        resetDate:
+          type: string
+          format: date-time
+    UserDTO:
+      title: UserDTO
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        login:
+          type: string

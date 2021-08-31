@@ -32,9 +32,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/library
+    url: jdbc:postgresql://acl_db:5432/librarydb
     username: postgres
-    password: 123
+    password: 1111
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -54,6 +54,11 @@ spring:
     cache: false
 
 server:
+  servlet:
+    session:
+      cookie:
+        http-only: false
+    context-path: /internship/yury_sinkevich/library/
   port: 8080
 
 # ===================================================================
