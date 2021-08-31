@@ -34,16 +34,16 @@ export class BookComponent implements OnInit {
     this.predicate = 'id';
     this.ascending = true;
   }
-  async postData(url = '') :Promise<string> {
-    const check = sessionStorage.getItem("jhi-authenticationToken")
-    let token = `Bearer ${check ? check : ''}`
-    token = token.replace('"', '')
-    token = token.replace('"', '')
-    const response :any= await fetch(url, {
+  async postData(url = ''): Promise<string> {
+    const check = sessionStorage.getItem('jhi-authenticationToken');
+    let token = `Bearer ${check ? check : ''}`;
+    token = token.replace('"', '');
+    token = token.replace('"', '');
+    const response: any = await fetch(url, {
       method: 'GET',
 
       headers: {
-        'Authorization': token,
+        Authorization: token,
         'X-TENANT-ID': 'yuradb',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -51,46 +51,43 @@ export class BookComponent implements OnInit {
         'Access-Control-Max-Age': '0',
         'Content-Security-Policy': 'default-src *; connect-src *; script-src *; object-src *',
         'X-Content-Security-Policy': 'default-src *; connect-src *; script-src *; object-src *',
-        'X-Webkit-CSP': 'default-src *; connect-src *; script-src unsafe-inline unsafe-eval *; object-src *' 
-      }
-    }
-    );
+        'X-Webkit-CSP': 'default-src *; connect-src *; script-src unsafe-inline unsafe-eval *; object-src *',
+      },
+    });
 
     const data: string = JSON.stringify(await response.json());
 
-    return data
-  }
-  
-    apiStatusRecordByFetch(): void{
-    this.postData("http://192.168.1.139:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book")
-    .then((data)=>{
-      this.masStatus = JSON.parse(data)
-      console.log(JSON.parse(data))
-    })
+    return data;
   }
 
-  apiCanDoByFetch(): void{
-    this.postData("http://192.168.1.139:8085/api/check-role")
-    .then((data)=>{
-      console.log(data)
-      this.canDo = JSON.parse(data)
-    })
+  apiStatusRecordByFetch(): void {
+    this.postData('http://ACL:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book').then(data => {
+      this.masStatus = JSON.parse(data);
+    });
   }
-    
-    getStatusRecord  (idRecord:any, permissionId: number):any {
-      if(this.canDo){
-        return 16
-      }
-      const newElemet :any = this.masStatus.filter((masStat) => masStat.objId === idRecord );
-      if (newElemet.length===0){return 0;}
 
-      for(let i = 0; i < newElemet.length; i++){
-        if(newElemet[i].mask === permissionId){
-         return true
-        }
+  apiCanDoByFetch(): void {
+    this.postData('http://ACL:8085/api/check-role').then(data => {
+      this.canDo = JSON.parse(data);
+    });
+  }
+
+  getStatusRecord(idRecord: any, permissionId: number): any {
+    if (this.canDo) {
+      return 16;
+    }
+    const newElemet: any = this.masStatus.filter(masStat => masStat.objId === idRecord);
+    if (newElemet.length === 0) {
+      return 0;
+    }
+
+    for (let i = 0; i < newElemet.length; i++) {
+      if (newElemet[i].mask === permissionId) {
+        return true;
       }
- 
-      return false;
+    }
+
+    return false;
   }
 
   loadAll(): void {

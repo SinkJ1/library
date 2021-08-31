@@ -3,10 +3,8 @@ package sinkj1.library.config;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.domain.DefaultPermissionFactory;
@@ -51,23 +49,30 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
 
-        if(domainObject instanceof Optional){
+        if (domainObject instanceof Optional) {
             domainObject = ((Optional<?>) domainObject).get();
         }
 
         ObjectIdentity objectIdentity = this.objectIdentityRetrievalStrategy.getObjectIdentity(domainObject);
         String token = tokenProvider.createToken(authentication, false);
-        String value = httpClient.post("http://192.168.1.139:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission), token);
+        String value = httpClient.post(
+            "http://ACL:8085/api/permission/check",
+            new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(), objectIdentity.getType()), permission),
+            token
+        );
 
         return Boolean.valueOf(value);
     }
 
     @Override
-    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
-                                 Object permission) {
+    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
         ObjectIdentity objectIdentity = this.objectIdentityGenerator.createObjectIdentity(targetId, targetType);
         String token = tokenProvider.createToken(authentication, false);
-        String value = httpClient.post("http://192.168.1.139:8085/api/permission/check", new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(),objectIdentity.getType()), permission), token);
+        String value = httpClient.post(
+            "http://ACL:8085/api/permission/check",
+            new CheckPermissionDto(new CustomObjectIdentity(objectIdentity.getIdentifier(), objectIdentity.getType()), permission),
+            token
+        );
 
         return Boolean.valueOf(value);
     }
@@ -87,5 +92,4 @@ public class AclPermissionEvaluator implements PermissionEvaluator {
     public void setPermissionFactory(PermissionFactory permissionFactory) {
         this.permissionFactory = permissionFactory;
     }
-
 }

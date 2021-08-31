@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -46,18 +45,21 @@ public class BookServiceImpl implements BookService {
 
     private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookRepository bookRepository, TokenProvider tokenProvider, PermissionService permissionService, BookMapper bookMapper) {
+    public BookServiceImpl(
+        BookRepository bookRepository,
+        TokenProvider tokenProvider,
+        PermissionService permissionService,
+        BookMapper bookMapper
+    ) {
         this.bookRepository = bookRepository;
         this.tokenProvider = tokenProvider;
         this.permissionService = permissionService;
         this.bookMapper = bookMapper;
     }
 
-
     public Book saveWithPermission(Book book) {
         return bookRepository.save(book);
     }
-
 
     @Override
     @PreAuthorize("hasPermission(#book, 'CREATE') or hasPermission(#book, 'ADMINISTRATION') or hasAuthority('ROLE_ADMIN')")
@@ -75,10 +77,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public Optional<BookDTO> updateWithPermission(Book book) {
-        return bookRepository
-            .findById(book.getId())
-            .map(bookRepository::save)
-            .map(bookMapper::toDto);
+        return bookRepository.findById(book.getId()).map(bookRepository::save).map(bookMapper::toDto);
     }
 
     @Override
@@ -89,7 +88,6 @@ public class BookServiceImpl implements BookService {
         Optional<BookDTO> optionalBookDTO = Optional.ofNullable(bookDTO);
         return optionalBookDTO;
     }
-
 
     private <T> Page<T> listConvertToPage(List<T> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
@@ -114,7 +112,6 @@ public class BookServiceImpl implements BookService {
 
         return page.map(bookMapper::toDto);
     }
-
 
     public Page<BookDTO> findAllWithEagerRelationships(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -158,15 +155,18 @@ public class BookServiceImpl implements BookService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = tokenProvider.createToken(authentication, false);
 
-        WebClient webClient = WebClient.create("http://192.168.1.139:8085");
-        Flux<MaskAndObject> employeeMap = webClient.
-            get().uri("/api/get-acl-entries?objE=sinkj1.library.domain.Book")
-            .headers(httpHeaders -> {
-                httpHeaders.set("Authorization", "Bearer " + token);
-                httpHeaders.set("X-TENANT-ID", "yuradb");
-            })
-            .retrieve().bodyToFlux(MaskAndObject.class);
+        WebClient webClient = WebClient.create("http://ACL:8085");
+        Flux<MaskAndObject> employeeMap = webClient
+            .get()
+            .uri("/api/get-acl-entries?objE=sinkj1.library.domain.Book")
+            .headers(
+                httpHeaders -> {
+                    httpHeaders.set("Authorization", "Bearer " + token);
+                    httpHeaders.set("X-TENANT-ID", "yuradb");
+                }
+            )
+            .retrieve()
+            .bodyToFlux(MaskAndObject.class);
         return employeeMap.collectList().block().stream().map(MaskAndObject::getObjId).collect(Collectors.toList());
     }
-
 }
