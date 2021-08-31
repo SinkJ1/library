@@ -155,7 +155,7 @@ public class BookServiceImpl implements BookService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = tokenProvider.createToken(authentication, false);
 
-        WebClient webClient = WebClient.create("http://ACL:8085");
+        WebClient webClient = WebClient.create("https://practice.sqilsoft.by/internship/yury_sinkevich/acl");
         Flux<MaskAndObject> employeeMap = webClient
             .get()
             .uri("/api/get-acl-entries?objE=sinkj1.library.domain.Book")

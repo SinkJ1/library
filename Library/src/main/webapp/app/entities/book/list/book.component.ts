@@ -61,13 +61,15 @@ export class BookComponent implements OnInit {
   }
 
   apiStatusRecordByFetch(): void {
-    this.postData('http://ACL:8085/api/get-acl-entries?objE=sinkj1.library.domain.Book').then(data => {
-      this.masStatus = JSON.parse(data);
-    });
+    this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/acl/api/get-acl-entries?objE=sinkj1.library.domain.Book').then(
+      data => {
+        this.masStatus = JSON.parse(data);
+      }
+    );
   }
 
   apiCanDoByFetch(): void {
-    this.postData('http://ACL:8085/api/check-role').then(data => {
+    this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/acl/api/check-role').then(data => {
       this.canDo = JSON.parse(data);
     });
   }

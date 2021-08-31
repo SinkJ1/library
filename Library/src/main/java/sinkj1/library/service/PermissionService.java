@@ -27,7 +27,7 @@ public class PermissionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = tokenProvider.createToken(authentication, false);
         httpClient.post(
-            "http://ACL:8085/api/permission/user",
+            "https://practice.sqilsoft.by/internship/yury_sinkevich/acl/api/permission/user",
             new PermissionDto(targetObj.getId(), targetObj.getClass().getName(), permission.getMask(), username),
             token
         );
@@ -37,7 +37,7 @@ public class PermissionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = tokenProvider.createToken(authentication, false);
         httpClient.post(
-            "http://ACL:8085/api/permission/authority",
+            "https://practice.sqilsoft.by/internship/yury_sinkevich/acl/api/permission/authority",
             new PermissionDto(targetObj.getId(), targetObj.getClass().getName(), permission.getMask(), authority),
             token
         );
