@@ -1,1614 +1,1024 @@
-openapi: 3.0.3
-info:
-  title: library API
-  description: library API documentation
-  contact: {}
-  license:
-    name: unlicensed
-  version: 0.0.1
-servers:
-  - url: https://practice.sqilsoft.by/internship/yury_sinkevich/library/
-    description: Inferred Url
-tags:
-  - name: account-resource
-    description: Account Resource
-  - name: author-resource
-    description: Author Resource
-  - name: authority-resource
-    description: Authority Resource
-  - name: book-resource
-    description: Book Resource
-  - name: customer-resource
-    description: Customer Resource
-  - name: public-user-resource
-    description: Public User Resource
-  - name: purchase-resource
-    description: Purchase Resource
-  - name: user-jwt-controller
-    description: User JWT Controller
-  - name: user-resource
-    description: User Resource
-paths:
-  /api/account:
-    get:
-      tags:
-        - account-resource
-      summary: getAccount
-      operationId: getAccountUsingGET
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AdminUserDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - account-resource
-      summary: saveAccount
-      operationId: saveAccountUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminUserDTO'
-      responses:
-        '200':
-          description: OK
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/account/change-password:
-    post:
-      tags:
-        - account-resource
-      summary: changePassword
-      operationId: changePasswordUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasswordChangeDTO'
-      responses:
-        '200':
-          description: OK
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/account/reset-password/finish:
-    post:
-      tags:
-        - account-resource
-      summary: finishPasswordReset
-      operationId: finishPasswordResetUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/KeyAndPasswordVM'
-      responses:
-        '200':
-          description: OK
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/account/reset-password/init:
-    post:
-      tags:
-        - account-resource
-      summary: requestPasswordReset
-      operationId: requestPasswordResetUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-      responses:
-        '200':
-          description: OK
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/activate:
-    get:
-      tags:
-        - account-resource
-      summary: activateAccount
-      operationId: activateAccountUsingGET
-      parameters:
-        - name: key
-          in: query
-          description: key
-          required: true
-          style: form
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/authenticate:
-    get:
-      tags:
-        - account-resource
-      summary: isAuthenticated
-      operationId: isAuthenticatedUsingGET
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - user-jwt-controller
-      summary: authorize
-      operationId: authorizeUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginVM'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/JWTToken'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/register:
-    post:
-      tags:
-        - account-resource
-      summary: registerAccount
-      operationId: registerAccountUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ManagedUserVM'
-      responses:
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/authors:
-    get:
-      tags:
-        - author-resource
-      summary: getAllAuthors
-      operationId: getAllAuthorsUsingGET
-      parameters:
-        - name: page
-          in: query
-          description: Page number of the requested page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Size of a page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: sort
-          in: query
-          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AuthorDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - author-resource
-      summary: createAuthor
-      operationId: createAuthorUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthorDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AuthorDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/authors/{id}:
-    get:
-      tags:
-        - author-resource
-      summary: getAuthor
-      operationId: getAuthorUsingGET
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AuthorDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    put:
-      tags:
-        - author-resource
-      summary: updateAuthor
-      operationId: updateAuthorUsingPUT
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthorDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AuthorDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    delete:
-      tags:
-        - author-resource
-      summary: deleteAuthor
-      operationId: deleteAuthorUsingDELETE
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-    patch:
-      tags:
-        - author-resource
-      summary: partialUpdateAuthor
-      operationId: partialUpdateAuthorUsingPATCH
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthorDTO'
-          application/merge-patch+json:
-            schema:
-              $ref: '#/components/schemas/AuthorDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AuthorDTO'
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-  /api/authority:
-    get:
-      tags:
-        - authority-resource
-      summary: getAllAuthority
-      operationId: getAllAuthorityUsingGET
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Authority'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/authority/{login}:
-    get:
-      tags:
-        - authority-resource
-      summary: getAllAuthorityByLogin
-      operationId: getAllAuthorityByLoginUsingGET
-      parameters:
-        - name: login
-          in: path
-          description: login
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Authority'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/books:
-    get:
-      tags:
-        - book-resource
-      summary: getAllBooks
-      operationId: getAllBooksUsingGET
-      parameters:
-        - name: eagerload
-          in: query
-          description: eagerload
-          required: false
-          style: form
-          schema:
-            type: boolean
-        - name: page
-          in: query
-          description: Page number of the requested page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Size of a page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: sort
-          in: query
-          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BookDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - book-resource
-      summary: createBook
-      operationId: createBookUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/BookDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/books/permission/authority:
-    post:
-      tags:
-        - book-resource
-      summary: addPermissionForAuthority
-      operationId: addPermissionForAuthorityUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermissionVM'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/books/permission/user:
-    post:
-      tags:
-        - book-resource
-      summary: addPermissionForUser
-      operationId: addPermissionForUserUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermissionVM'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/books/{id}:
-    get:
-      tags:
-        - book-resource
-      summary: getBook
-      operationId: getBookUsingGET
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/BookDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    put:
-      tags:
-        - book-resource
-      summary: updateBook
-      operationId: updateBookUsingPUT
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/BookDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    delete:
-      tags:
-        - book-resource
-      summary: deleteBook
-      operationId: deleteBookUsingDELETE
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-    patch:
-      tags:
-        - book-resource
-      summary: partialUpdateBook
-      operationId: partialUpdateBookUsingPATCH
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookDTO'
-          application/merge-patch+json:
-            schema:
-              $ref: '#/components/schemas/BookDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/BookDTO'
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-  /api/customers:
-    get:
-      tags:
-        - customer-resource
-      summary: getAllCustomers
-      operationId: getAllCustomersUsingGET
-      parameters:
-        - name: page
-          in: query
-          description: Page number of the requested page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Size of a page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: sort
-          in: query
-          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CustomerDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - customer-resource
-      summary: createCustomer
-      operationId: createCustomerUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomerDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/customers/{id}:
-    get:
-      tags:
-        - customer-resource
-      summary: getCustomer
-      operationId: getCustomerUsingGET
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    put:
-      tags:
-        - customer-resource
-      summary: updateCustomer
-      operationId: updateCustomerUsingPUT
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomerDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    delete:
-      tags:
-        - customer-resource
-      summary: deleteCustomer
-      operationId: deleteCustomerUsingDELETE
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-    patch:
-      tags:
-        - customer-resource
-      summary: partialUpdateCustomer
-      operationId: partialUpdateCustomerUsingPATCH
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomerDTO'
-          application/merge-patch+json:
-            schema:
-              $ref: '#/components/schemas/CustomerDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/CustomerDTO'
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-  /api/authorities:
-    get:
-      tags:
-        - public-user-resource
-      summary: getAuthorities
-      operationId: getAuthoritiesUsingGET
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/users:
-    get:
-      tags:
-        - public-user-resource
-      summary: getAllPublicUsers
-      operationId: getAllPublicUsersUsingGET
-      parameters:
-        - name: page
-          in: query
-          description: Page number of the requested page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Size of a page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: sort
-          in: query
-          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/purchases:
-    get:
-      tags:
-        - purchase-resource
-      summary: getAllPurchases
-      operationId: getAllPurchasesUsingGET
-      parameters:
-        - name: page
-          in: query
-          description: Page number of the requested page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Size of a page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: sort
-          in: query
-          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PurchaseDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - purchase-resource
-      summary: createPurchase
-      operationId: createPurchaseUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PurchaseDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PurchaseDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/purchases/{id}:
-    get:
-      tags:
-        - purchase-resource
-      summary: getPurchase
-      operationId: getPurchaseUsingGET
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PurchaseDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    put:
-      tags:
-        - purchase-resource
-      summary: updatePurchase
-      operationId: updatePurchaseUsingPUT
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PurchaseDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PurchaseDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    delete:
-      tags:
-        - purchase-resource
-      summary: deletePurchase
-      operationId: deletePurchaseUsingDELETE
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-    patch:
-      tags:
-        - purchase-resource
-      summary: partialUpdatePurchase
-      operationId: partialUpdatePurchaseUsingPATCH
-      parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PurchaseDTO'
-          application/merge-patch+json:
-            schema:
-              $ref: '#/components/schemas/PurchaseDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PurchaseDTO'
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-  /api/admin/users:
-    get:
-      tags:
-        - user-resource
-      summary: getAllUsers
-      operationId: getAllUsersUsingGET
-      parameters:
-        - name: page
-          in: query
-          description: Page number of the requested page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Size of a page
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: integer
-            format: int32
-        - name: sort
-          in: query
-          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
-          required: false
-          style: form
-          allowReserved: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AdminUserDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    put:
-      tags:
-        - user-resource
-      summary: updateUser
-      operationId: updateUserUsingPUT
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminUserDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AdminUserDTO'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    post:
-      tags:
-        - user-resource
-      summary: createUser
-      operationId: createUserUsingPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminUserDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/User'
-        '201':
-          description: Created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-  /api/admin/users/{login}:
-    get:
-      tags:
-        - user-resource
-      summary: getUser
-      operationId: getUserUsingGET
-      parameters:
-        - name: login
-          in: path
-          description: login
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AdminUserDTO'
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-    delete:
-      tags:
-        - user-resource
-      summary: deleteUser
-      operationId: deleteUserUsingDELETE
-      parameters:
-        - name: login
-          in: path
-          description: login
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-components:
-  schemas:
-    AdminUserDTO:
-      title: AdminUserDTO
-      required:
-        - login
-      type: object
-      properties:
-        activated:
-          type: boolean
-        authorities:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-        createdBy:
-          type: string
-        createdDate:
-          type: string
-          format: date-time
-        email:
-          maxLength: 254
-          minLength: 5
-          type: string
-        firstName:
-          maxLength: 50
-          minLength: 0
-          type: string
-        id:
-          type: integer
-          format: int64
-        imageUrl:
-          maxLength: 256
-          minLength: 0
-          type: string
-        langKey:
-          maxLength: 10
-          minLength: 2
-          type: string
-        lastModifiedBy:
-          type: string
-        lastModifiedDate:
-          type: string
-          format: date-time
-        lastName:
-          maxLength: 50
-          minLength: 0
-          type: string
-        login:
-          maxLength: 50
-          minLength: 1
-
-          type: string
-    AuthorDTO:
-      title: AuthorDTO
-      required:
-        - birthday
-        - name
-      type: object
-      properties:
-        birthday:
-          type: string
-          format: date
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-    Authority:
-      title: Authority
-      required:
-        - name
-      type: object
-      properties:
-        name:
-          maxLength: 50
-          minLength: 0
-          type: string
-    BookDTO:
-      title: BookDTO
-      required:
-        - dateOfIssue
-        - name
-      type: object
-      properties:
-        authors:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorDTO'
-        dateOfIssue:
-          type: string
-          format: date
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-    CustomerDTO:
-      title: CustomerDTO
-      required:
-        - birthday
-        - name
-      type: object
-      properties:
-        birthday:
-          type: string
-          format: date
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-    JWTToken:
-      title: JWTToken
-      type: object
-      properties:
-        id_token:
-          type: string
-    KeyAndPasswordVM:
-      title: KeyAndPasswordVM
-      type: object
-      properties:
-        key:
-          type: string
-        newPassword:
-          type: string
-    LoginVM:
-      title: LoginVM
-      required:
-        - password
-        - username
-      type: object
-      properties:
-        password:
-          maxLength: 100
-          minLength: 1
-          type: string
-        rememberMe:
-          type: boolean
-        username:
-          maxLength: 50
-          minLength: 1
-          type: string
-    ManagedUserVM:
-      title: ManagedUserVM
-      required:
-        - login
-      type: object
-      properties:
-        activated:
-          type: boolean
-        authorities:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-        createdBy:
-          type: string
-        createdDate:
-          type: string
-          format: date-time
-        email:
-          maxLength: 254
-          minLength: 5
-          type: string
-        firstName:
-          maxLength: 50
-          minLength: 0
-          type: string
-        id:
-          type: integer
-          format: int64
-        imageUrl:
-          maxLength: 256
-          minLength: 0
-          type: string
-        langKey:
-          maxLength: 10
-          minLength: 2
-          type: string
-        lastModifiedBy:
-          type: string
-        lastModifiedDate:
-          type: string
-          format: date-time
-        lastName:
-          maxLength: 50
-          minLength: 0
-          type: string
-        login:
-          maxLength: 50
-          minLength: 1
-
-          type: string
-        password:
-          maxLength: 100
-          minLength: 4
-          type: string
-    PasswordChangeDTO:
-      title: PasswordChangeDTO
-      type: object
-      properties:
-        currentPassword:
-          type: string
-        newPassword:
-          type: string
-    PermissionVM:
-      title: PermissionVM
-      type: object
-      properties:
-        entityId:
-          type: integer
-          format: int64
-        permission:
-          type: string
-        userCredentional:
-          type: string
-    PurchaseDTO:
-      title: PurchaseDTO
-      type: object
-      properties:
-        book:
-          $ref: '#/components/schemas/BookDTO'
-        cost:
-          type: integer
-          format: int64
-        customer:
-          $ref: '#/components/schemas/CustomerDTO'
-        id:
-          type: integer
-          format: int64
-    User:
-      title: User
-      required:
-        - activated
-        - login
-      type: object
-      properties:
-        activated:
-          type: boolean
-        email:
-          maxLength: 254
-          minLength: 5
-          type: string
-        firstName:
-          maxLength: 50
-          minLength: 0
-          type: string
-        id:
-          type: integer
-          format: int64
-        imageUrl:
-          maxLength: 256
-          minLength: 0
-          type: string
-        langKey:
-          maxLength: 10
-          minLength: 2
-          type: string
-        lastName:
-          maxLength: 50
-          minLength: 0
-          type: string
-        login:
-          maxLength: 50
-          minLength: 1
-
-          type: string
-        resetDate:
-          type: string
-          format: date-time
-    UserDTO:
-      title: UserDTO
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        login:
-          type: string
+{
+  'swagger': '2.0',
+  'info':
+    {
+      'description': 'Api Documentation',
+      'version': '1.0',
+      'title': 'Api Documentation',
+      'termsOfService': 'urn:tos',
+      'contact': {},
+      'license': { 'name': 'Apache 2.0', 'url': 'http://www.apache.org/licenses/LICENSE-2.0' },
+    },
+  'host': 'practice.sqilsoft.by/internship/yury_sinkevich/library',
+  'basePath': '/',
+  'tags':
+    [
+      { 'name': 'account-resource', 'description': 'Account Resource' },
+      { 'name': 'author-resource', 'description': 'Author Resource' },
+      { 'name': 'authority-resource', 'description': 'Authority Resource' },
+      { 'name': 'book-resource', 'description': 'Book Resource' },
+      { 'name': 'customer-resource', 'description': 'Customer Resource' },
+      { 'name': 'public-user-resource', 'description': 'Public User Resource' },
+      { 'name': 'purchase-resource', 'description': 'Purchase Resource' },
+      { 'name': 'user-jwt-controller', 'description': 'User JWT Controller' },
+      { 'name': 'user-resource', 'description': 'User Resource' },
+    ],
+  'paths':
+    {
+      '/api/account':
+        {
+          'get':
+            {
+              'tags': ['account-resource'],
+              'summary': 'getAccount',
+              'operationId': 'getAccountUsingGET_1',
+              'produces': ['*/*'],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AdminUserDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['account-resource'],
+              'summary': 'saveAccount',
+              'operationId': 'saveAccountUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'userDTO',
+                    'description': 'userDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/AdminUserDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/account/change-password':
+        {
+          'post':
+            {
+              'tags': ['account-resource'],
+              'summary': 'changePassword',
+              'operationId': 'changePasswordUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'passwordChangeDto',
+                    'description': 'passwordChangeDto',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PasswordChangeDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/account/reset-password/finish':
+        {
+          'post':
+            {
+              'tags': ['account-resource'],
+              'summary': 'finishPasswordReset',
+              'operationId': 'finishPasswordResetUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'keyAndPassword',
+                    'description': 'keyAndPassword',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/KeyAndPasswordVM' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/account/reset-password/init':
+        {
+          'post':
+            {
+              'tags': ['account-resource'],
+              'summary': 'requestPasswordReset',
+              'operationId': 'requestPasswordResetUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters': [{ 'in': 'body', 'name': 'mail', 'description': 'mail', 'required': true, 'schema': { 'type': 'string' } }],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/activate':
+        {
+          'get':
+            {
+              'tags': ['account-resource'],
+              'summary': 'activateAccount',
+              'operationId': 'activateAccountUsingGET_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'key', 'in': 'query', 'description': 'key', 'required': true, 'type': 'string' }],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/admin/users':
+        {
+          'get':
+            {
+              'tags': ['user-resource'],
+              'summary': 'getAllUsers',
+              'operationId': 'getAllUsersUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'offset', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int64' },
+                  { 'name': 'paged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'pageNumber', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'pageSize', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'sort.sorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'sort.unsorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'unpaged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                ],
+              'responses':
+                { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/AdminUserDTO' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['user-resource'],
+              'summary': 'createUser',
+              'operationId': 'createUserUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'userDTO',
+                    'description': 'userDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/AdminUserDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/User' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'put':
+            {
+              'tags': ['user-resource'],
+              'summary': 'updateUser',
+              'operationId': 'updateUserUsingPUT_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'userDTO',
+                    'description': 'userDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/AdminUserDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AdminUserDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/admin/users/{login}':
+        {
+          'get':
+            {
+              'tags': ['user-resource'],
+              'summary': 'getUser',
+              'operationId': 'getUserUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'name': 'login',
+                    'in': 'path',
+                    'description': 'login',
+                    'required': true,
+                    'type': 'string',
+                    'pattern': "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$",
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AdminUserDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'delete':
+            {
+              'tags': ['user-resource'],
+              'summary': 'deleteUser',
+              'operationId': 'deleteUserUsingDELETE_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'name': 'login',
+                    'in': 'path',
+                    'description': 'login',
+                    'required': true,
+                    'type': 'string',
+                    'pattern': "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$",
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/authenticate':
+        {
+          'get':
+            {
+              'tags': ['account-resource'],
+              'summary': 'isAuthenticated',
+              'operationId': 'isAuthenticatedUsingGET_1',
+              'produces': ['*/*'],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'string' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['user-jwt-controller'],
+              'summary': 'authorize',
+              'operationId': 'authorizeUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'loginVM',
+                    'description': 'loginVM',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/LoginVM' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/JWTToken' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/authorities':
+        {
+          'get':
+            {
+              'tags': ['public-user-resource'],
+              'summary': 'getAuthorities',
+              'operationId': 'getAuthoritiesUsingGET_1',
+              'produces': ['*/*'],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { 'type': 'string' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/authority':
+        {
+          'get':
+            {
+              'tags': ['authority-resource'],
+              'summary': 'getAllAuthority',
+              'operationId': 'getAllAuthorityUsingGET_1',
+              'produces': ['*/*'],
+              'responses':
+                { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/Authority' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/authority/{login}':
+        {
+          'get':
+            {
+              'tags': ['authority-resource'],
+              'summary': 'getAllAuthorityByLogin',
+              'operationId': 'getAllAuthorityByLoginUsingGET_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'login', 'in': 'path', 'description': 'login', 'required': true, 'type': 'string' }],
+              'responses':
+                { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/Authority' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/authors':
+        {
+          'get':
+            {
+              'tags': ['author-resource'],
+              'summary': 'getAllAuthors',
+              'operationId': 'getAllAuthorsUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'offset', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int64' },
+                  { 'name': 'paged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'pageNumber', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'pageSize', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'sort.sorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'sort.unsorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'unpaged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                ],
+              'responses':
+                { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/AuthorDTO' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['author-resource'],
+              'summary': 'createAuthor',
+              'operationId': 'createAuthorUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'authorDTO',
+                    'description': 'authorDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/AuthorDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AuthorDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/authors/{id}':
+        {
+          'get':
+            {
+              'tags': ['author-resource'],
+              'summary': 'getAuthor',
+              'operationId': 'getAuthorUsingGET_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AuthorDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'put':
+            {
+              'tags': ['author-resource'],
+              'summary': 'updateAuthor',
+              'operationId': 'updateAuthorUsingPUT_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'authorDTO',
+                    'description': 'authorDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/AuthorDTO' },
+                  },
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AuthorDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'delete':
+            {
+              'tags': ['author-resource'],
+              'summary': 'deleteAuthor',
+              'operationId': 'deleteAuthorUsingDELETE_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'patch':
+            {
+              'tags': ['author-resource'],
+              'summary': 'partialUpdateAuthor',
+              'operationId': 'partialUpdateAuthorUsingPATCH_1',
+              'consumes': ['application/merge-patch+json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'authorDTO',
+                    'description': 'authorDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/AuthorDTO' },
+                  },
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/AuthorDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/books':
+        {
+          'get':
+            {
+              'tags': ['book-resource'],
+              'summary': 'getAllBooks',
+              'operationId': 'getAllBooksUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'name': 'eagerload',
+                    'in': 'query',
+                    'description': 'eagerload',
+                    'required': false,
+                    'type': 'boolean',
+                    'default': false,
+                  },
+                  { 'name': 'offset', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int64' },
+                  { 'name': 'paged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'pageNumber', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'pageSize', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'sort.sorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'sort.unsorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'unpaged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/BookDTO' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['book-resource'],
+              'summary': 'createBook',
+              'operationId': 'createBookUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'bookDTO',
+                    'description': 'bookDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/BookDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/BookDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/books/permission/authority':
+        {
+          'post':
+            {
+              'tags': ['book-resource'],
+              'summary': 'addPermissionForAuthority',
+              'operationId': 'addPermissionForAuthorityUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'permissionVM',
+                    'description': 'permissionVM',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PermissionVM' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'string' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/books/permission/user':
+        {
+          'post':
+            {
+              'tags': ['book-resource'],
+              'summary': 'addPermissionForUser',
+              'operationId': 'addPermissionForUserUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'permissionVM',
+                    'description': 'permissionVM',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PermissionVM' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'string' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/books/{id}':
+        {
+          'get':
+            {
+              'tags': ['book-resource'],
+              'summary': 'getBook',
+              'operationId': 'getBookUsingGET_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/BookDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'put':
+            {
+              'tags': ['book-resource'],
+              'summary': 'updateBook',
+              'operationId': 'updateBookUsingPUT_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'bookDTO',
+                    'description': 'bookDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/BookDTO' },
+                  },
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/BookDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'delete':
+            {
+              'tags': ['book-resource'],
+              'summary': 'deleteBook',
+              'operationId': 'deleteBookUsingDELETE_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'patch':
+            {
+              'tags': ['book-resource'],
+              'summary': 'partialUpdateBook',
+              'operationId': 'partialUpdateBookUsingPATCH_1',
+              'consumes': ['application/merge-patch+json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'bookDTO',
+                    'description': 'bookDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/BookDTO' },
+                  },
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/BookDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/customers':
+        {
+          'get':
+            {
+              'tags': ['customer-resource'],
+              'summary': 'getAllCustomers',
+              'operationId': 'getAllCustomersUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'offset', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int64' },
+                  { 'name': 'paged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'pageNumber', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'pageSize', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'sort.sorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'sort.unsorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'unpaged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                ],
+              'responses':
+                { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/CustomerDTO' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['customer-resource'],
+              'summary': 'createCustomer',
+              'operationId': 'createCustomerUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'customerDTO',
+                    'description': 'customerDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/CustomerDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/CustomerDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/customers/{id}':
+        {
+          'get':
+            {
+              'tags': ['customer-resource'],
+              'summary': 'getCustomer',
+              'operationId': 'getCustomerUsingGET_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/CustomerDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'put':
+            {
+              'tags': ['customer-resource'],
+              'summary': 'updateCustomer',
+              'operationId': 'updateCustomerUsingPUT_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'customerDTO',
+                    'description': 'customerDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/CustomerDTO' },
+                  },
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/CustomerDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'delete':
+            {
+              'tags': ['customer-resource'],
+              'summary': 'deleteCustomer',
+              'operationId': 'deleteCustomerUsingDELETE_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'patch':
+            {
+              'tags': ['customer-resource'],
+              'summary': 'partialUpdateCustomer',
+              'operationId': 'partialUpdateCustomerUsingPATCH_1',
+              'consumes': ['application/merge-patch+json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'customerDTO',
+                    'description': 'customerDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/CustomerDTO' },
+                  },
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/CustomerDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/purchases':
+        {
+          'get':
+            {
+              'tags': ['purchase-resource'],
+              'summary': 'getAllPurchases',
+              'operationId': 'getAllPurchasesUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'offset', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int64' },
+                  { 'name': 'paged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'pageNumber', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'pageSize', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'sort.sorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'sort.unsorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'unpaged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                ],
+              'responses':
+                { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/PurchaseDTO' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'post':
+            {
+              'tags': ['purchase-resource'],
+              'summary': 'createPurchase',
+              'operationId': 'createPurchaseUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'purchaseDTO',
+                    'description': 'purchaseDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PurchaseDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/PurchaseDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/purchases/{id}':
+        {
+          'get':
+            {
+              'tags': ['purchase-resource'],
+              'summary': 'getPurchase',
+              'operationId': 'getPurchaseUsingGET_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/PurchaseDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'put':
+            {
+              'tags': ['purchase-resource'],
+              'summary': 'updatePurchase',
+              'operationId': 'updatePurchaseUsingPUT_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                  {
+                    'in': 'body',
+                    'name': 'purchaseDTO',
+                    'description': 'purchaseDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PurchaseDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/PurchaseDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'delete':
+            {
+              'tags': ['purchase-resource'],
+              'summary': 'deletePurchase',
+              'operationId': 'deletePurchaseUsingDELETE_1',
+              'produces': ['*/*'],
+              'parameters': [{ 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' }],
+              'responses': { '200': { 'description': 'OK' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+          'patch':
+            {
+              'tags': ['purchase-resource'],
+              'summary': 'partialUpdatePurchase',
+              'operationId': 'partialUpdatePurchaseUsingPATCH_1',
+              'consumes': ['application/merge-patch+json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'id', 'in': 'path', 'description': 'id', 'required': true, 'type': 'integer', 'format': 'int64' },
+                  {
+                    'in': 'body',
+                    'name': 'purchaseDTO',
+                    'description': 'purchaseDTO',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PurchaseDTO' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { '$ref': '#/definitions/PurchaseDTO' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/register':
+        {
+          'post':
+            {
+              'tags': ['account-resource'],
+              'summary': 'registerAccount',
+              'operationId': 'registerAccountUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'managedUserVM',
+                    'description': 'managedUserVM',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/ManagedUserVM' },
+                  },
+                ],
+              'responses': { '201': { 'description': 'Created' } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/users':
+        {
+          'get':
+            {
+              'tags': ['public-user-resource'],
+              'summary': 'getAllPublicUsers',
+              'operationId': 'getAllPublicUsersUsingGET_1',
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  { 'name': 'offset', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int64' },
+                  { 'name': 'paged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'pageNumber', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'pageSize', 'in': 'query', 'required': false, 'type': 'integer', 'format': 'int32' },
+                  { 'name': 'sort.sorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'sort.unsorted', 'in': 'query', 'required': false, 'type': 'boolean' },
+                  { 'name': 'unpaged', 'in': 'query', 'required': false, 'type': 'boolean' },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/UserDTO' } } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+    },
+  'securityDefinitions': { 'Authorization': { 'type': 'apiKey', 'name': 'Authorization', 'in': 'header' } },
+  'definitions':
+    {
+      'AdminUserDTO':
+        {
+          'type': 'object',
+          'required': ['login'],
+          'properties':
+            {
+              'activated': { 'type': 'boolean' },
+              'authorities': { 'type': 'array', 'uniqueItems': true, 'items': { 'type': 'string' } },
+              'createdBy': { 'type': 'string' },
+              'createdDate': { 'type': 'string', 'format': 'date-time' },
+              'email': { 'type': 'string', 'minLength': 5, 'maxLength': 254 },
+              'firstName': { 'type': 'string', 'minLength': 0, 'maxLength': 50 },
+              'id': { 'type': 'integer', 'format': 'int64' },
+              'imageUrl': { 'type': 'string', 'minLength': 0, 'maxLength': 256 },
+              'langKey': { 'type': 'string', 'minLength': 2, 'maxLength': 10 },
+              'lastModifiedBy': { 'type': 'string' },
+              'lastModifiedDate': { 'type': 'string', 'format': 'date-time' },
+              'lastName': { 'type': 'string', 'minLength': 0, 'maxLength': 50 },
+              'login':
+                {
+                  'type': 'string',
+                  'minLength': 1,
+                  'maxLength': 50,
+                  'pattern': "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$",
+                },
+            },
+          'title': 'AdminUserDTO',
+        },
+      'AuthorDTO':
+        {
+          'type': 'object',
+          'required': ['birthday', 'name'],
+          'properties':
+            {
+              'birthday': { 'type': 'string', 'format': 'date' },
+              'id': { 'type': 'integer', 'format': 'int64' },
+              'name': { 'type': 'string' },
+            },
+          'title': 'AuthorDTO',
+        },
+      'Authority':
+        {
+          'type': 'object',
+          'required': ['name'],
+          'properties': { 'name': { 'type': 'string', 'minLength': 0, 'maxLength': 50 } },
+          'title': 'Authority',
+        },
+      'BookDTO':
+        {
+          'type': 'object',
+          'required': ['dateOfIssue', 'name'],
+          'properties':
+            {
+              'authors': { 'type': 'array', 'uniqueItems': true, 'items': { '$ref': '#/definitions/AuthorDTO' } },
+              'dateOfIssue': { 'type': 'string', 'format': 'date' },
+              'id': { 'type': 'integer', 'format': 'int64' },
+              'name': { 'type': 'string' },
+            },
+          'title': 'BookDTO',
+        },
+      'CustomerDTO':
+        {
+          'type': 'object',
+          'required': ['birthday', 'name'],
+          'properties':
+            {
+              'birthday': { 'type': 'string', 'format': 'date' },
+              'id': { 'type': 'integer', 'format': 'int64' },
+              'name': { 'type': 'string' },
+            },
+          'title': 'CustomerDTO',
+        },
+      'JWTToken': { 'type': 'object', 'properties': { 'id_token': { 'type': 'string' } }, 'title': 'JWTToken' },
+      'KeyAndPasswordVM':
+        {
+          'type': 'object',
+          'properties': { 'key': { 'type': 'string' }, 'newPassword': { 'type': 'string' } },
+          'title': 'KeyAndPasswordVM',
+        },
+      'LoginVM':
+        {
+          'type': 'object',
+          'required': ['password', 'username'],
+          'properties':
+            {
+              'password': { 'type': 'string', 'minLength': 1, 'maxLength': 100 },
+              'rememberMe': { 'type': 'boolean' },
+              'username': { 'type': 'string', 'minLength': 1, 'maxLength': 50 },
+            },
+          'title': 'LoginVM',
+        },
+      'ManagedUserVM':
+        {
+          'type': 'object',
+          'required': ['login'],
+          'properties':
+            {
+              'activated': { 'type': 'boolean' },
+              'authorities': { 'type': 'array', 'uniqueItems': true, 'items': { 'type': 'string' } },
+              'createdBy': { 'type': 'string' },
+              'createdDate': { 'type': 'string', 'format': 'date-time' },
+              'email': { 'type': 'string', 'minLength': 5, 'maxLength': 254 },
+              'firstName': { 'type': 'string', 'minLength': 0, 'maxLength': 50 },
+              'id': { 'type': 'integer', 'format': 'int64' },
+              'imageUrl': { 'type': 'string', 'minLength': 0, 'maxLength': 256 },
+              'langKey': { 'type': 'string', 'minLength': 2, 'maxLength': 10 },
+              'lastModifiedBy': { 'type': 'string' },
+              'lastModifiedDate': { 'type': 'string', 'format': 'date-time' },
+              'lastName': { 'type': 'string', 'minLength': 0, 'maxLength': 50 },
+              'login':
+                {
+                  'type': 'string',
+                  'minLength': 1,
+                  'maxLength': 50,
+                  'pattern': "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$",
+                },
+              'password': { 'type': 'string', 'minLength': 4, 'maxLength': 100 },
+            },
+          'title': 'ManagedUserVM',
+        },
+      'PasswordChangeDTO':
+        {
+          'type': 'object',
+          'properties': { 'currentPassword': { 'type': 'string' }, 'newPassword': { 'type': 'string' } },
+          'title': 'PasswordChangeDTO',
+        },
+      'PermissionVM':
+        {
+          'type': 'object',
+          'properties':
+            {
+              'entityId': { 'type': 'integer', 'format': 'int64' },
+              'permission': { 'type': 'string' },
+              'userCredentional': { 'type': 'string' },
+            },
+          'title': 'PermissionVM',
+        },
+      'PurchaseDTO':
+        {
+          'type': 'object',
+          'properties':
+            {
+              'book': { '$ref': '#/definitions/BookDTO' },
+              'cost': { 'type': 'integer', 'format': 'int64' },
+              'customer': { '$ref': '#/definitions/CustomerDTO' },
+              'id': { 'type': 'integer', 'format': 'int64' },
+            },
+          'title': 'PurchaseDTO',
+        },
+      'User':
+        {
+          'type': 'object',
+          'required': ['activated', 'login'],
+          'properties':
+            {
+              'activated': { 'type': 'boolean' },
+              'email': { 'type': 'string', 'minLength': 5, 'maxLength': 254 },
+              'firstName': { 'type': 'string', 'minLength': 0, 'maxLength': 50 },
+              'id': { 'type': 'integer', 'format': 'int64' },
+              'imageUrl': { 'type': 'string', 'minLength': 0, 'maxLength': 256 },
+              'langKey': { 'type': 'string', 'minLength': 2, 'maxLength': 10 },
+              'lastName': { 'type': 'string', 'minLength': 0, 'maxLength': 50 },
+              'login':
+                {
+                  'type': 'string',
+                  'minLength': 1,
+                  'maxLength': 50,
+                  'pattern': "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$",
+                },
+              'resetDate': { 'type': 'string', 'format': 'date-time' },
+            },
+          'title': 'User',
+        },
+      'UserDTO':
+        {
+          'type': 'object',
+          'properties': { 'id': { 'type': 'integer', 'format': 'int64' }, 'login': { 'type': 'string' } },
+          'title': 'UserDTO',
+        },
+    },
+}
