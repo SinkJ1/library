@@ -55,7 +55,12 @@ public class BookResource {
 
     private final PermissionService permissionService;
 
-    public BookResource(BookMapper bookMapper, BookService bookService, BookRepository bookRepository, PermissionService permissionService) {
+    public BookResource(
+        BookMapper bookMapper,
+        BookService bookService,
+        BookRepository bookRepository,
+        PermissionService permissionService
+    ) {
         this.bookMapper = bookMapper;
         this.bookService = bookService;
         this.bookRepository = bookRepository;
@@ -214,36 +219,47 @@ public class BookResource {
 
     @PostMapping("/books/permission/authority")
     public ResponseEntity<String> addPermissionForAuthority(@RequestBody PermissionVM permissionVM) {
-
         Optional<Book> optionalBook = bookRepository.findById(permissionVM.getEntityId());
-        if (!optionalBook.isPresent()){
+        if (!optionalBook.isPresent() && permissionVM.getEntityId() != 0) {
             return ResponseEntity.ok("book does not found");
         }
-
-        Book book = optionalBook.get();
-        permissionService.addPermissionForAuthority(book, convertFromStringToBasePermission(permissionVM.getPermission()), permissionVM.getUserCredentional());
-        return ResponseEntity
-            .noContent()
-            .build();
+        Book book;
+        if (permissionVM.getEntityId() == 0 && permissionVM.getPermission().equalsIgnoreCase("create")) {
+            book = new Book();
+            book.setId(0L);
+        } else {
+            book = optionalBook.get();
+        }
+        permissionService.addPermissionForAuthority(
+            book,
+            convertFromStringToBasePermission(permissionVM.getPermission()),
+            permissionVM.getUserCredentional()
+        );
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/books/permission/user")
     public ResponseEntity<String> addPermissionForUser(@RequestBody PermissionVM permissionVM) {
-
         Optional<Book> optionalBook = bookRepository.findById(permissionVM.getEntityId());
-        if (!optionalBook.isPresent()){
+        if (!optionalBook.isPresent() && permissionVM.getEntityId() != 0) {
             return ResponseEntity.ok("book does not found");
         }
-
-        Book book = optionalBook.get();
-        permissionService.addPermissionForUser(book, convertFromStringToBasePermission(permissionVM.getPermission()), permissionVM.getUserCredentional());
-        return ResponseEntity
-            .noContent()
-            .build();
+        Book book;
+        if (permissionVM.getEntityId() == 0 && permissionVM.getPermission().equalsIgnoreCase("create")) {
+            book = new Book();
+            book.setId(0L);
+        } else {
+            book = optionalBook.get();
+        }
+        permissionService.addPermissionForUser(
+            book,
+            convertFromStringToBasePermission(permissionVM.getPermission()),
+            permissionVM.getUserCredentional()
+        );
+        return ResponseEntity.noContent().build();
     }
 
-    private Permission convertFromStringToBasePermission(String permission){
-
+    private Permission convertFromStringToBasePermission(String permission) {
         switch (permission.toUpperCase()) {
             case "WRITE":
                 return BasePermission.WRITE;
@@ -257,7 +273,4 @@ public class BookResource {
                 return BasePermission.READ;
         }
     }
-
-
-
 }
