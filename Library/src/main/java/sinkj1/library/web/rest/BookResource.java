@@ -21,12 +21,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import sinkj1.library.domain.Book;
+import sinkj1.library.domain.DeletePermission;
 import sinkj1.library.domain.MaskAndObject;
 import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.repository.BookRepository;
 import sinkj1.library.service.BookService;
 import sinkj1.library.service.PermissionService;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.dto.DeletePermissionDto;
 import sinkj1.library.service.mapper.BookMapper;
 import sinkj1.library.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
@@ -256,6 +258,18 @@ public class BookResource {
             convertFromStringToBasePermission(permissionVM.getPermission()),
             permissionVM.getUserCredentional()
         );
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/books/permissions/user")
+    public ResponseEntity<String> addPermissions(@RequestBody List<PermissionVM> permissionVM) {
+        bookService.addPermissions(permissionVM);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/books/delete-permission/user")
+    public ResponseEntity<String> deletePermission(@RequestBody DeletePermission deletePermission) {
+        bookService.deletePermission(deletePermission);
         return ResponseEntity.noContent().build();
     }
 

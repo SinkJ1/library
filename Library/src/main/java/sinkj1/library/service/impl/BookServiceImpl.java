@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,12 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import sinkj1.library.domain.Book;
+import sinkj1.library.domain.DeletePermission;
 import sinkj1.library.domain.MaskAndObject;
+import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.repository.BookRepository;
 import sinkj1.library.security.jwt.TokenProvider;
 import sinkj1.library.service.BookService;
 import sinkj1.library.service.PermissionService;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.dto.DeletePermissionDto;
+import sinkj1.library.service.dto.PermissionDto;
 import sinkj1.library.service.mapper.BookMapper;
 
 /**
@@ -142,6 +147,29 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(book.getId());
     }
 
+    @Override
+    public void addPermissions(List<PermissionVM> permissionVMS) {
+        List<PermissionDto> permissionDtos = new ArrayList<>();
+        for (PermissionVM permissionVM : permissionVMS) {
+            permissionDtos.add(
+                new PermissionDto(
+                    permissionVM.getEntityId(),
+                    Book.class.getName(),
+                    convertFromStringToBasePermission(permissionVM.getPermission()).getMask(),
+                    permissionVM.getUserCredentional()
+                )
+            );
+        }
+        permissionService.addPermissions(permissionDtos);
+    }
+
+    @Override
+    public void deletePermission(DeletePermission deletePermission) {
+        DeletePermissionDto deletePermissionDto = new DeletePermissionDto();
+        deletePermissionDto.setEntityClassName(Book.class.getName());
+        permissionService.deletePermission(deletePermissionDto);
+    }
+
     private boolean checkPermission(Authentication authentication) {
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
         List<String> authoritiesStrings = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
@@ -168,5 +196,20 @@ public class BookServiceImpl implements BookService {
             .retrieve()
             .bodyToFlux(MaskAndObject.class);
         return employeeMap.collectList().block().stream().map(MaskAndObject::getObjId).collect(Collectors.toList());
+    }
+
+    private Permission convertFromStringToBasePermission(String permission) {
+        switch (permission.toUpperCase()) {
+            case "WRITE":
+                return BasePermission.WRITE;
+            case "ADMINISTRATION":
+                return BasePermission.ADMINISTRATION;
+            case "CREATE":
+                return BasePermission.CREATE;
+            case "DELETE":
+                return BasePermission.DELETE;
+            default:
+                return BasePermission.READ;
+        }
     }
 }

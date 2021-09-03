@@ -8,8 +8,11 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import sinkj1.library.domain.Book;
+import sinkj1.library.domain.DeletePermission;
 import sinkj1.library.domain.MaskAndObject;
+import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.dto.DeletePermissionDto;
 
 /**
  * Service Interface for managing {@link sinkj1.library.domain.Book}.
@@ -62,4 +65,7 @@ public interface BookService {
      */
     void delete(Book book);
 
+    void addPermissions(List<PermissionVM> permissionVMS);
+
+    void deletePermission(DeletePermission deletePermissionDto);
 }
