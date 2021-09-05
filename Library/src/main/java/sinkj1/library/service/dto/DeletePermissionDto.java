@@ -2,7 +2,7 @@ package sinkj1.library.service.dto;
 
 public class DeletePermissionDto {
 
-    private int entityId;
+    private Long entityId;
 
     private String entityClassName;
 
@@ -12,7 +12,7 @@ public class DeletePermissionDto {
 
     public DeletePermissionDto() {}
 
-    public DeletePermissionDto(int entityId, String entityClassName, int permission, String user) {
+    public DeletePermissionDto(Long entityId, String entityClassName, int permission, String user) {
         this.entityId = entityId;
         this.entityClassName = entityClassName;
         this.permission = permission;
@@ -35,11 +35,11 @@ public class DeletePermissionDto {
         this.user = user;
     }
 
-    public int getEntityId() {
+    public Long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(Long entityId) {
         this.entityId = entityId;
     }
 

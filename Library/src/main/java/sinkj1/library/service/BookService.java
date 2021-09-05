@@ -67,5 +67,5 @@ public interface BookService {
 
     void addPermissions(List<PermissionVM> permissionVMS);
 
-    void deletePermission(DeletePermission deletePermissionDto);
+    void deletePermission(PermissionVM deletePermissionDto);
 }

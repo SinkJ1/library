@@ -1,0 +1,36 @@
+<form [formGroup]="permissionForm">
+  <div class="modal-header">
+    <h4 class="modal-title" data-cy="bookDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirm permission operation</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+  </div>
+  <div class="modal-body">
+    <label>
+      book id:
+      <input formControlName="entityId" />
+    </label>
+    <label>
+      permission:
+      <select (change)="selectPermission($event)">
+        <option>WRITE</option>
+        <option>READ</option>
+        <option>CREATE</option>
+        <option>DELETE</option>
+        <option>ADMINISTRATION</option>
+      </select>
+    </label>
+    <label>
+      user:
+      <input formControlName="userCredentional" />
+    </label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+      &nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+
+    <button id="jhi-confirm-delete-book" data-cy="entityConfirmAddButton" class="btn btn-danger" (click)="deletePermission()">
+      &nbsp;<span jhiTranslate="entity.action.add">Add</span>
+    </button>
+  </div>
+</form>

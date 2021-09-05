@@ -268,7 +268,7 @@ public class BookResource {
     }
 
     @PostMapping("/books/delete-permission/user")
-    public ResponseEntity<String> deletePermission(@RequestBody DeletePermission deletePermission) {
+    public ResponseEntity<String> deletePermission(@RequestBody PermissionVM deletePermission) {
         bookService.deletePermission(deletePermission);
         return ResponseEntity.noContent().build();
     }

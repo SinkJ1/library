@@ -12,11 +12,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import sinkj1.library.service.HttpClient;
 import sinkj1.library.service.dto.AclByIdDto;
 import sinkj1.library.service.dto.DeletePermissionDto;
 import sinkj1.library.web.rest.AccountResource;
 
+@Service
 public class HttpClientDeletePermissionImpl implements HttpClient<DeletePermissionDto> {
 
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);

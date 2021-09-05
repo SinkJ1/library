@@ -8,7 +8,8 @@
         <span jhiTranslate="libraryApp.book.home.refreshListLabel">Refresh List</span>
       </button>
 
-      <button *ngIf="getStatusRecord( 0, 4 ) || getStatusRecord( 0, 16 )"
+      <button
+        *ngIf="getStatusRecord(0, 4) || getStatusRecord(0, 16)"
         id="jh-create-entity"
         data-cy="entityCreateButton"
         class="btn btn-primary jh-create-entity create-book"
@@ -16,6 +17,27 @@
       >
         <fa-icon icon="plus"></fa-icon>
         <span jhiTranslate="libraryApp.book.home.createLabel"> Create a new Book </span>
+      </button>
+
+      <button
+        *ngIf="getStatusRecord(0, 4) || getStatusRecord(0, 16)"
+        id="jh-permission"
+        (click)="permission()"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-book"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        Add Permission
+      </button>
+      <button
+        *ngIf="getStatusRecord(0, 4) || getStatusRecord(0, 16)"
+        id="jh-permission"
+        (click)="deletePermission()"
+        data-cy="entityCreateButton"
+        class="btn btn-danger btn-sm"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        Delete Permission
       </button>
     </div>
   </h2>
@@ -49,17 +71,35 @@
           <td>{{ book.dateOfIssue | formatMediumDate }}</td>
           <td class="text-right">
             <div class="btn-group">
-              <button *ngIf="getStatusRecord( book.id, 1 ) || getStatusRecord( book.id, 16 ) " type="submit" [routerLink]="['/book', book.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+              <button
+                *ngIf="getStatusRecord(book.id, 1) || getStatusRecord(book.id, 16)"
+                type="submit"
+                [routerLink]="['/book', book.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
                 <fa-icon icon="eye"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
               </button>
 
-              <button *ngIf="getStatusRecord( book.id, 2 ) || getStatusRecord( book.id, 16 ) " :type="submit" [routerLink]="['/book', book.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+              <button
+                *ngIf="getStatusRecord(book.id, 2) || getStatusRecord(book.id, 16)"
+                :type="submit"
+                [routerLink]="['/book', book.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
                 <fa-icon icon="pencil-alt"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
               </button>
 
-              <button *ngIf="getStatusRecord( book.id, 8 ) || getStatusRecord( book.id, 16 ) " type="submit" (click)="delete(book)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+              <button
+                *ngIf="getStatusRecord(book.id, 8) || getStatusRecord(book.id, 16)"
+                type="submit"
+                (click)="delete(book)"
+                class="btn btn-danger btn-sm"
+                data-cy="entityDeleteButton"
+              >
                 <fa-icon icon="times"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
               </button>

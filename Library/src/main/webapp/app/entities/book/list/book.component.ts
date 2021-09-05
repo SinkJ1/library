@@ -9,6 +9,9 @@ import { BookService } from '../service/book.service';
 import { BookDeleteDialogComponent } from '../delete/book-delete-dialog.component';
 import { ParseLinks } from 'app/core/util/parse-links.service';
 
+import { BookPermissionDialogComponent } from '../permission/book-permission-dialog.component';
+import { BookPermissionDeleteDialogComponent } from '../permission/delete-permission/book-permission-delete-dialog.component';
+
 @Component({
   selector: 'jhi-book',
   templateUrl: './book.component.html',
@@ -90,6 +93,26 @@ export class BookComponent implements OnInit {
     }
 
     return false;
+  }
+
+  permission(): void {
+    const modalRef = this.modalService.open(BookPermissionDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.books = this.books;
+    modalRef.closed.subscribe(reason => {
+      if (reason === 'add') {
+        console.log(modalRef.componentInstance.books);
+      }
+    });
+  }
+
+  deletePermission(): void {
+    const modalRef = this.modalService.open(BookPermissionDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+
+    modalRef.closed.subscribe(reason => {
+      if (reason === 'add') {
+        console.log(modalRef.componentInstance.books);
+      }
+    });
   }
 
   loadAll(): void {

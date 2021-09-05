@@ -5,10 +5,19 @@ import { BookDetailComponent } from './detail/book-detail.component';
 import { BookUpdateComponent } from './update/book-update.component';
 import { BookDeleteDialogComponent } from './delete/book-delete-dialog.component';
 import { BookRoutingModule } from './route/book-routing.module';
+import { BookPermissionDeleteDialogComponent } from './permission/delete-permission/book-permission-delete-dialog.component';
+import { BookPermissionDialogComponent } from './permission/book-permission-dialog.component';
 
 @NgModule({
   imports: [SharedModule, BookRoutingModule],
-  declarations: [BookComponent, BookDetailComponent, BookUpdateComponent, BookDeleteDialogComponent],
-  entryComponents: [BookDeleteDialogComponent],
+  declarations: [
+    BookComponent,
+    BookDetailComponent,
+    BookUpdateComponent,
+    BookDeleteDialogComponent,
+    BookPermissionDialogComponent,
+    BookPermissionDeleteDialogComponent,
+  ],
+  entryComponents: [BookDeleteDialogComponent, BookPermissionDialogComponent, BookPermissionDeleteDialogComponent],
 })
 export class BookModule {}
