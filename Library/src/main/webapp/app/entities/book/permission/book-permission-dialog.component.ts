@@ -109,7 +109,12 @@ export class BookPermissionDialogComponent {
           this.toAddPermission[i].userCredentional = user;
         }
       }
-      console.log(this.postData('http://localhost:8080/api/books/test', this.toAddPermission));
+      console.log(
+        this.postData(
+          'https://https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/permissions/user',
+          this.toAddPermission
+        )
+      );
     }
   }
 }

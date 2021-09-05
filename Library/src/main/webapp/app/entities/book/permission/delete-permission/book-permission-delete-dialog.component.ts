@@ -63,7 +63,12 @@ export class BookPermissionDeleteDialogComponent {
         userCredentional: this.permissionForm.get(['userCredentional'])?.value,
       };
 
-      console.log(this.postData('http://localhost:8080/api/books/delete-test', deletedPermission));
+      console.log(
+        this.postData(
+          'https://https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/delete-permission/user',
+          deletedPermission
+        )
+      );
     }
   }
 }
