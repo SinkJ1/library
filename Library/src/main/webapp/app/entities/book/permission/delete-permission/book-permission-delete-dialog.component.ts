@@ -64,10 +64,7 @@ export class BookPermissionDeleteDialogComponent {
       };
 
       console.log(
-        this.postData(
-          'https://https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/delete-permission/user',
-          deletedPermission
-        )
+        this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/delete-permission/user', deletedPermission)
       );
     }
   }

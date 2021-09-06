@@ -110,10 +110,7 @@ export class BookPermissionDialogComponent {
         }
       }
       console.log(
-        this.postData(
-          'https://https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/permissions/user',
-          this.toAddPermission
-        )
+        this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/permissions/user', this.toAddPermission)
       );
     }
   }
