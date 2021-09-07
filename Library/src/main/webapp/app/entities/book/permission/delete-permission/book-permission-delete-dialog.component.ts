@@ -44,7 +44,7 @@ export class BookPermissionDeleteDialogComponent {
       body: JSON.stringify(sendData),
     });
 
-    const data: string = JSON.stringify(await response.json());
+    const data: string = await response.text();
 
     return data;
   }
@@ -62,10 +62,7 @@ export class BookPermissionDeleteDialogComponent {
         permission: this.permission ? this.permission : 'WRITE',
         userCredentional: this.permissionForm.get(['userCredentional'])?.value,
       };
-
-      console.log(
-        this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/delete-permission/user', deletedPermission)
-      );
+      this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/delete-permission/user', deletedPermission);
       this.activeModal.close('deleted');
     }
   }
