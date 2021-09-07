@@ -465,6 +465,29 @@
               'security': [{ 'Authorization': ['global'] }],
             },
         },
+      '/api/books/delete-permission/user':
+        {
+          'post':
+            {
+              'tags': ['book-resource'],
+              'summary': 'deletePermission',
+              'operationId': 'deletePermissionUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'deletePermission',
+                    'description': 'deletePermission',
+                    'required': true,
+                    'schema': { '$ref': '#/definitions/PermissionVM' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'string' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
       '/api/books/permission/authority':
         {
           'post':
@@ -505,6 +528,29 @@
                     'description': 'permissionVM',
                     'required': true,
                     'schema': { '$ref': '#/definitions/PermissionVM' },
+                  },
+                ],
+              'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'string' } } },
+              'security': [{ 'Authorization': ['global'] }],
+            },
+        },
+      '/api/books/permissions/user':
+        {
+          'post':
+            {
+              'tags': ['book-resource'],
+              'summary': 'addPermissions',
+              'operationId': 'addPermissionsUsingPOST_1',
+              'consumes': ['application/json'],
+              'produces': ['*/*'],
+              'parameters':
+                [
+                  {
+                    'in': 'body',
+                    'name': 'permissionVM',
+                    'description': 'permissionVM',
+                    'required': true,
+                    'schema': { 'type': 'array', 'items': { '$ref': '#/definitions/PermissionVM' } },
                   },
                 ],
               'responses': { '200': { 'description': 'OK', 'schema': { 'type': 'string' } } },

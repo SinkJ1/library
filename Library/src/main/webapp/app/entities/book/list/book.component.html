@@ -19,17 +19,11 @@
         <span jhiTranslate="libraryApp.book.home.createLabel"> Create a new Book </span>
       </button>
 
-      <button
-        *ngIf="canDo"
-        id="jh-permission"
-        (click)="permission()"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-book"
-      >
+      <button id="jh-permission" (click)="permission()" data-cy="entityCreateButton" class="btn btn-primary jh-create-entity create-book">
         <fa-icon icon="plus"></fa-icon>
         Add Permission
       </button>
-      <button *ngIf="canDo" id="jh-permission" (click)="deletePermission()" data-cy="entityCreateButton" class="btn btn-danger btn-sm">
+      <button id="jh-permission" (click)="deletePermission()" data-cy="entityCreateButton" class="btn btn-danger btn-sm">
         <fa-icon icon="plus"></fa-icon>
         Delete Permission
       </button>

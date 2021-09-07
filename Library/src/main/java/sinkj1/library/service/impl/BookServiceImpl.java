@@ -166,7 +166,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deletePermission(PermissionVM permissionVM) {
         DeletePermissionDto deletePermissionDto = new DeletePermissionDto();
-        deletePermissionDto.setEntityId(permissionVM.getEntityId());
+        deletePermissionDto.setEntityId((int) (long) permissionVM.getEntityId());
         deletePermissionDto.setUser(permissionVM.getUserCredentional());
         deletePermissionDto.setPermission(convertFromStringToIntPermission(permissionVM.getPermission()));
         deletePermissionDto.setEntityClassName(Book.class.getName());
