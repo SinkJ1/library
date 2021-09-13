@@ -6,29 +6,44 @@
   </div>
   <div class="modal-body">
     <label>
-      book id:
-      <input formControlName="entityId" />
-    </label>
-    <label>
-      permission:
-      <select (change)="selectPermission($event)">
-        <option>WRITE</option>
-        <option>READ</option>
-        <option>CREATE</option>
-        <option>DELETE</option>
-        <option>ADMINISTRATION</option>
-      </select>
-    </label>
-    <label>
       user:
       <input formControlName="userCredentional" />
     </label>
+    <button class="btn btn-primary btn-sm" data-cy="entityEditButton" (click)="downloadBooks()">Find</button>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">&nbsp;Cancel</button>
-
-    <button id="jhi-confirm-delete-book" data-cy="entityConfirmAddButton" class="btn btn-danger" (click)="deletePermission()">
-      &nbsp;Delete
-    </button>
+    <div class="table-responsive" id="entities" style="height: 400px" *ngIf="books && books.length > 0">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr>
+            <th scope="col"><span jhiTranslate="global.field.id">ID</span></th>
+            <th scope="col"><span jhiTranslate="libraryApp.book.name">Name</span></th>
+            <th scope="col"><span>Permission</span></th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let book of books" data-cy="entityTable">
+            <td>
+              {{ book.id }}
+            </td>
+            <td>{{ book.name }}</td>
+            <td>
+              {{ book.mask }}
+            </td>
+            <td>
+              <button
+                id="jhi-confirm-delete-book"
+                data-cy="entityConfirmAddButton"
+                class="btn btn-danger"
+                (click)="deletePermission(book.id!, book.mask!)"
+              >
+                &nbsp;Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </form>

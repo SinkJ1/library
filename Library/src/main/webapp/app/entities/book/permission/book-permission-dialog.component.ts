@@ -16,16 +16,17 @@ class BookPermission {
 })
 export class BookPermissionDialogComponent {
   books?: IBook[];
-  toAddPermission: BookPermission[];
+  selectedBooks: number[];
   bufferPermissionArray: BookPermission[];
 
   permissionForm = this.fb.group({
-    userCredentional: [],
-    userPermission: [],
+    userCredentional: '',
+    permissions: [],
+    bookName: '',
   });
 
   constructor(protected bookService: BookService, protected activeModal: NgbActiveModal, protected fb: FormBuilder) {
-    (this.toAddPermission = []), (this.bufferPermissionArray = []);
+    (this.bufferPermissionArray = []), (this.selectedBooks = []);
   }
 
   cancel(): void {
@@ -34,50 +35,60 @@ export class BookPermissionDialogComponent {
 
   check(bookId: number, isChecked: any): void {
     const user = this.permissionForm.get(['userCredentional'])!.value;
-    const selectedPermission = this.bufferPermissionArray.filter(value => value.entityId === bookId)[0]?.permission;
-    const permission: BookPermission = {
-      entityId: bookId,
-      permission: selectedPermission ? selectedPermission : 'WRITE',
-      userCredentional: user,
-    };
-
-    if (isChecked.checked) {
-      this.toAddPermission.push(permission);
+    if (bookId === 0 && isChecked.checked) {
+      const bookPermission: BookPermission = {
+        entityId: bookId,
+        permission: 'CREATE',
+        userCredentional: user,
+      };
+      this.bufferPermissionArray.push(bookPermission);
+    } else if (bookId === 0) {
+      this.bufferPermissionArray = this.bufferPermissionArray.filter(value => value.entityId !== bookId);
+    } else if (isChecked.checked) {
+      this.selectedBooks.push(bookId);
     } else {
-      this.toAddPermission = this.toAddPermission.filter(value => value.entityId !== bookId);
+      this.selectedBooks = this.selectedBooks.filter(value => value !== bookId);
+      this.bufferPermissionArray = this.bufferPermissionArray.filter(value => value.entityId !== bookId);
     }
   }
 
-  addPermission(e: any, bookId: number): void {
-    const selectedPermission = e.target.value;
-    const userName = this.permissionForm.get(['userCredentional']);
-    const user = userName !== null ? userName.value : '';
-    const permission: BookPermission = {
-      entityId: bookId,
-      permission: selectedPermission,
-      userCredentional: user,
-    };
+  addAction(bookId: number): void {
+    const selectedPermissions: string[] = this.permissionForm.get(['permissions'])!.value;
+    const user = this.permissionForm.get(['userCredentional'])!.value;
+    const newPermissions: BookPermission[] = [];
+    selectedPermissions.map(value => {
+      const bookPermission: BookPermission = {
+        entityId: bookId,
+        permission: value,
+        userCredentional: user,
+      };
+      newPermissions.push(bookPermission);
+    });
+    const bufferArray = this.bufferPermissionArray.filter(value => value.entityId !== bookId);
+    const concatedArray = bufferArray.concat(newPermissions);
+    this.bufferPermissionArray = concatedArray;
+  }
 
-    let flag = false;
-    for (let i = 0; i < this.bufferPermissionArray.length; i++) {
-      if (this.bufferPermissionArray[i].entityId === bookId) {
-        this.bufferPermissionArray[i].permission = selectedPermission;
-        this.bufferPermissionArray[i].userCredentional = user;
-        flag = true;
-        break;
-      }
-    }
+  getBooks(): IBook[] {
+    const bookName: string = this.permissionForm.get(['bookName'])!.value;
+    return this.books!.filter(value => value.name!.toLowerCase().indexOf(bookName.toLowerCase()) !== -1);
+  }
 
-    if (!flag) {
-      this.bufferPermissionArray.push(permission);
+  showPermissions(bookId: number): any {
+    const permission: number[] = this.selectedBooks.filter(value => value === bookId);
+    if (permission.length > 0) {
+      return true;
     }
+  }
 
-    for (let i = 0; i < this.toAddPermission.length; i++) {
-      if (this.toAddPermission[i].entityId === bookId) {
-        this.toAddPermission[i].permission = selectedPermission;
-        this.bufferPermissionArray[i].userCredentional = user;
-      }
+  showAddPermissionsButton(): any {
+    if (this.bufferPermissionArray.length === 0) {
+      return true;
     }
+  }
+
+  checkUserCredentional(): any {
+    return this.permissionForm.get(['userCredentional'])!.value;
   }
 
   async postData(url = '', sendData: any): Promise<string> {
@@ -94,22 +105,24 @@ export class BookPermissionDialogComponent {
       body: JSON.stringify(sendData),
     });
 
-    const data: string = JSON.stringify(await response.json());
+    const data: string = JSON.stringify(await response.text());
 
     return data;
   }
 
   confirmAdd(): void {
     const user = this.permissionForm.get(['userCredentional'])!.value;
-    if (!user || this.toAddPermission.length === 0) {
-      alert('write user credentional or pick row');
+    if (!user) {
+      this.bufferPermissionArray.length = 0;
+      this.selectedBooks.length = 0;
+      alert('write user name or role');
     } else {
-      if (!this.toAddPermission[0].userCredentional) {
-        for (let i = 0; i < this.toAddPermission.length; i++) {
-          this.toAddPermission[i].userCredentional = user;
-        }
-      }
-      this.postData('https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/permissions/user', this.toAddPermission);
+      console.log(
+        this.postData(
+          'https://practice.sqilsoft.by/internship/yury_sinkevich/library/api/books/permissions/user',
+          this.bufferPermissionArray
+        )
+      );
       this.activeModal.close('added');
     }
   }

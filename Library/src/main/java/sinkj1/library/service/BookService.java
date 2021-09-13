@@ -12,6 +12,7 @@ import sinkj1.library.domain.DeletePermission;
 import sinkj1.library.domain.MaskAndObject;
 import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.dto.BookPermissionDTO;
 import sinkj1.library.service.dto.DeletePermissionDto;
 
 /**
@@ -68,4 +69,6 @@ public interface BookService {
     void addPermissions(List<PermissionVM> permissionVMS);
 
     void deletePermission(PermissionVM deletePermissionDto);
+
+    List<BookPermissionDTO> getBooksByUser(String userName);
 }

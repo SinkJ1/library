@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,11 @@ import sinkj1.library.domain.DeletePermission;
 import sinkj1.library.domain.MaskAndObject;
 import sinkj1.library.domain.PermissionVM;
 import sinkj1.library.repository.BookRepository;
+import sinkj1.library.security.AuthoritiesConstants;
 import sinkj1.library.service.BookService;
 import sinkj1.library.service.PermissionService;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.dto.BookPermissionDTO;
 import sinkj1.library.service.dto.DeletePermissionDto;
 import sinkj1.library.service.mapper.BookMapper;
 import sinkj1.library.web.rest.errors.BadRequestAlertException;
@@ -220,6 +223,7 @@ public class BookResource {
     }
 
     @PostMapping("/books/permission/authority")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<String> addPermissionForAuthority(@RequestBody PermissionVM permissionVM) {
         Optional<Book> optionalBook = bookRepository.findById(permissionVM.getEntityId());
         if (!optionalBook.isPresent() && permissionVM.getEntityId() != 0) {
@@ -241,6 +245,7 @@ public class BookResource {
     }
 
     @PostMapping("/books/permission/user")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<String> addPermissionForUser(@RequestBody PermissionVM permissionVM) {
         Optional<Book> optionalBook = bookRepository.findById(permissionVM.getEntityId());
         if (!optionalBook.isPresent() && permissionVM.getEntityId() != 0) {
@@ -262,12 +267,19 @@ public class BookResource {
     }
 
     @PostMapping("/books/permissions/user")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<String> addPermissions(@RequestBody List<PermissionVM> permissionVM) {
         bookService.addPermissions(permissionVM);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/books/delete-permission/user")
+    @GetMapping("/books/by-user/{userName}")
+    public ResponseEntity<List<BookPermissionDTO>> getBooksByUserName(@PathVariable String userName) {
+        return ResponseEntity.ok().body(bookService.getBooksByUser(userName));
+    }
+
+    @DeleteMapping("/books/delete-permission/user")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<String> deletePermission(@RequestBody PermissionVM deletePermission) {
         bookService.deletePermission(deletePermission);
         return ResponseEntity.noContent().build();

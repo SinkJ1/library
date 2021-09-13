@@ -5,6 +5,7 @@ import { IBook } from '../book.model';
 import { BookService } from '../service/book.service';
 
 @Component({
+  selector: 'jhi-book',
   templateUrl: './book-delete-dialog.component.html',
 })
 export class BookDeleteDialogComponent {

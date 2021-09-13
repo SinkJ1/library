@@ -2,6 +2,7 @@ package sinkj1.library.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import sinkj1.library.security.jwt.TokenProvider;
 import sinkj1.library.service.BookService;
 import sinkj1.library.service.PermissionService;
 import sinkj1.library.service.dto.BookDTO;
+import sinkj1.library.service.dto.BookPermissionDTO;
 import sinkj1.library.service.dto.DeletePermissionDto;
 import sinkj1.library.service.dto.PermissionDto;
 import sinkj1.library.service.mapper.BookMapper;
@@ -148,6 +150,28 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<BookPermissionDTO> getBooksByUser(String name) {
+        List<MaskAndObject> booksMaskAndObject = getBookPermissionsForUserByName(name);
+        List<Long> booksIds = booksMaskAndObject.stream().map(MaskAndObject::getObjId).collect(Collectors.toList());
+        List<Book> books = bookRepository.findAllWithEagerRelationships(booksIds);
+        List<BookPermissionDTO> bookPermissionDto = booksMaskAndObject
+            .stream()
+            .map(
+                maskAndObject -> new BookPermissionDTO(maskAndObject.getObjId(), convertFromIntToStringPermission(maskAndObject.getMask()))
+            )
+            .collect(Collectors.toList());
+        for (Book book : books) {
+            for (BookPermissionDTO bookPermissionDTO : bookPermissionDto) {
+                if (Objects.equals(book.getId(), bookPermissionDTO.getId())) {
+                    bookPermissionDTO.setName(book.getName());
+                }
+            }
+        }
+
+        return bookPermissionDto;
+    }
+
+    @Override
     public void addPermissions(List<PermissionVM> permissionVMS) {
         List<PermissionDto> permissionDtos = new ArrayList<>();
         for (PermissionVM permissionVM : permissionVMS) {
@@ -201,6 +225,25 @@ public class BookServiceImpl implements BookService {
         return employeeMap.collectList().block().stream().map(MaskAndObject::getObjId).collect(Collectors.toList());
     }
 
+    private List<MaskAndObject> getBookPermissionsForUserByName(String userName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String token = tokenProvider.createToken(authentication, false);
+
+        WebClient webClient = WebClient.create("https://practice.sqilsoft.by/internship/yury_sinkevich/acl");
+        Flux<MaskAndObject> employeeMap = webClient
+            .get()
+            .uri("/api/get-acl-entries-by-user/" + userName + "?objE=sinkj1.library.domain.Book")
+            .headers(
+                httpHeaders -> {
+                    httpHeaders.set("Authorization", "Bearer " + token);
+                    httpHeaders.set("X-TENANT-ID", "yuradb");
+                }
+            )
+            .retrieve()
+            .bodyToFlux(MaskAndObject.class);
+        return new ArrayList<>(Objects.requireNonNull(employeeMap.collectList().block()));
+    }
+
     private Permission convertFromStringToBasePermission(String permission) {
         switch (permission.toUpperCase()) {
             case "WRITE":
@@ -213,6 +256,21 @@ public class BookServiceImpl implements BookService {
                 return BasePermission.DELETE;
             default:
                 return BasePermission.READ;
+        }
+    }
+
+    private String convertFromIntToStringPermission(int permission) {
+        switch (permission) {
+            case 2:
+                return "WRITE";
+            case 16:
+                return "ADMINISTRATION";
+            case 4:
+                return "CREATE";
+            case 8:
+                return "DELETE";
+            default:
+                return "READ";
         }
     }
 
